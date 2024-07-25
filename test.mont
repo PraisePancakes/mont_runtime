@@ -1,7 +1,8 @@
 
    fn void add(a, b) {
       a + b;
-      disp "emissions 1..2..3..";
+      if(a == b) {};
+      print "emissions 1..2..3..";
    };
 
    fn entry main() {};
