@@ -30,7 +30,7 @@ namespace MPROCESS
             std::cout << tokenizer->get_tokens().size();
             for (auto &token : tokenizer->get_tokens())
             {
-                std::cout << "[TOKEN] type : " << (int)token.type << " | value : " << token.value << std::endl;
+                std::cout << "[TOKEN] type : " << (int)token.type << " | value : " << token.lexeme.lexeme << " | line : " << token.lexeme.line << " | position : " << token.lexeme.position << std::endl;
             }
         }
 
@@ -39,7 +39,7 @@ namespace MPROCESS
             for (auto &lexeme : lexer->get_lexemes())
             {
 
-                std::cout << "lexeme : " << lexeme << std::endl;
+                std::cout << "lexeme : " << lexeme.lexeme << std::endl;
             }
         };
     };

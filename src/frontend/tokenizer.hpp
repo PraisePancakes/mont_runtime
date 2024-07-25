@@ -30,7 +30,7 @@ namespace MPROCESS
     struct TokenInfo
     {
         TOKEN_TYPE type;
-        std::string value;
+        LexemeItem lexeme;
 
     } typedef Token;
 
@@ -43,47 +43,50 @@ namespace MPROCESS
 
             for (size_t i = 0; i < lexemes.size(); i++)
             {
-                if (lexemes[i] == "{")
+                LexemeItem lexeme_item(lexemes[i]);
+
+                if (lexemes[i].lexeme == "{")
                 {
-                    tokens.push_back({TOKEN_TYPE::TOK_LCURLY, "{"});
+                    tokens.push_back({TOKEN_TYPE::TOK_LCURLY, lexeme_item});
                 }
-                if (lexemes[i] == "}")
+                if (lexemes[i].lexeme == "}")
                 {
-                    tokens.push_back({TOKEN_TYPE::TOK_RCURLY, "}"});
+                    tokens.push_back({TOKEN_TYPE::TOK_RCURLY, lexeme_item});
                 }
-                if (lexemes[i] == "(")
+                if (lexemes[i].lexeme == "(")
                 {
-                    tokens.push_back({TOKEN_TYPE::TOK_LPAREN, "("});
+                    tokens.push_back({TOKEN_TYPE::TOK_LPAREN, lexeme_item});
                 }
-                if (lexemes[i] == ")")
+                if (lexemes[i].lexeme == ")")
                 {
-                    tokens.push_back({TOKEN_TYPE::TOK_RPAREN, ")"});
+                    tokens.push_back({TOKEN_TYPE::TOK_RPAREN, lexeme_item});
                 }
-                if (lexemes[i] == ",")
+                if (lexemes[i].lexeme == ",")
                 {
-                    tokens.push_back({TOKEN_TYPE::TOK_COMMA, ","});
+                    tokens.push_back({TOKEN_TYPE::TOK_COMMA, lexeme_item});
                 }
 
-                if (lexemes[i] == "+")
+                if (lexemes[i].lexeme == "+")
                 {
-                    tokens.push_back({TOKEN_TYPE::TOK_ADD, "+"});
+                    tokens.push_back({TOKEN_TYPE::TOK_ADD, lexeme_item});
                 }
 
-                if (lexemes[i] == ";")
+                if (lexemes[i].lexeme == ";")
                 {
-                    tokens.push_back({TOKEN_TYPE::TOK_SEMI, ";"});
+                    tokens.push_back({TOKEN_TYPE::TOK_SEMI, lexeme_item});
                 };
 
-                if (lexemes[i] == "\"")
+                if (lexemes[i].lexeme == "\"")
                 {
-                    tokens.push_back({TOKEN_TYPE::TOK_STRING_LIT, "\""});
+                    tokens.push_back({TOKEN_TYPE::TOK_STRING_LIT, lexeme_item});
                     i++;
-                    while (lexemes[i] != "\"")
+                    while (lexemes[i].lexeme != "\"")
                     {
-                        tokens.push_back({TOKEN_TYPE::TOK_STRING_LIT, lexemes[i]});
+                        LexemeItem string_lit(lexemes[i]);
+                        tokens.push_back({TOKEN_TYPE::TOK_STRING_LIT, string_lit});
                         i++;
                     }
-                    tokens.push_back({TOKEN_TYPE::TOK_STRING_LIT, "\""});
+                    tokens.push_back({TOKEN_TYPE::TOK_STRING_LIT, lexeme_item});
                 }
             }
         };

@@ -16,8 +16,8 @@
 
 namespace MPROCESS
 {
-    /*
-     struct LexemeItem
+
+    struct LexemeItem
     {
         int line;
         int position;
@@ -32,9 +32,8 @@ namespace MPROCESS
 
         ~LexemeItem() {};
     };
-     */
 
-    using LexemeVector = std::vector<std::string>;
+    using LexemeVector = std::vector<LexemeItem>;
     class Lexer
     {
         LexemeVector lexemes;
@@ -54,9 +53,10 @@ namespace MPROCESS
             return false;
         };
 
-        void prepare_lexeme_buffer(std::string &buffer)
+        void ship_lexeme(int line, int pos, std::string &buffer)
         {
-            lexemes.push_back(buffer);
+            LexemeItem item(line, pos, buffer);
+            lexemes.push_back(item);
             buffer = "";
         }
 
@@ -67,44 +67,58 @@ namespace MPROCESS
             std::string lexeme_buffer = ""; // traverse until a delimeter OR a whitespace character has been reached. if reached -> create a lexeme and push to lex vector
                                             // to traverse rely soley on peek and consume
 
+            int line = 1;
+            int position = 1;
+
             while (current_byte_cursor < bytes_to_lex.size())
             {
                 if (is_delimeter(peek_byte()))
                 {
                     if (!lexeme_buffer.empty())
                     {
-                        prepare_lexeme_buffer(lexeme_buffer);
+                        ship_lexeme(line, position, lexeme_buffer);
                     }
+                    position++;
                     lexeme_buffer += consume();
-                    prepare_lexeme_buffer(lexeme_buffer);
+                    ship_lexeme(line, position, lexeme_buffer);
                 }
 
                 if (peek_byte() == '\"')
                 {
 
+                    position++;
                     lexeme_buffer += consume();
-                    prepare_lexeme_buffer(lexeme_buffer);
+                    ship_lexeme(line, position, lexeme_buffer);
 
                     while (peek_byte() != '\"')
                     {
+                        position++;
                         lexeme_buffer += consume();
                     }
 
-                    prepare_lexeme_buffer(lexeme_buffer);
+                    ship_lexeme(line, position, lexeme_buffer);
 
+                    position++;
                     lexeme_buffer += consume();
-                    prepare_lexeme_buffer(lexeme_buffer);
+                    ship_lexeme(line, position, lexeme_buffer);
                 }
                 if (peek_byte() == ' ' || peek_byte() == '\n')
                 {
+                    if (peek_byte() == '\n')
+                    {
+                        line++;
+                        position = 0;
+                    }
                     if (!lexeme_buffer.empty())
                     {
-                        prepare_lexeme_buffer(lexeme_buffer);
+                        ship_lexeme(line, position, lexeme_buffer);
                     }
+                    position++;
                     consume();
                 }
                 else
                 {
+                    position++;
                     lexeme_buffer += consume();
                 }
             }
