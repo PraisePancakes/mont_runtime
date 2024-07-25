@@ -45,6 +45,37 @@ namespace MPROCESS
 
             while (current_byte_cursor < bytes_to_lex.size())
             {
+                if (is_delimeter(peek_byte()))
+                {
+                    if (!lexeme_buffer.empty())
+                    {
+                        lexemes.push_back(lexeme_buffer);
+                        lexeme_buffer.clear();
+                    }
+                    lexeme_buffer += consume();
+                    lexemes.push_back(lexeme_buffer);
+                    lexeme_buffer.clear();
+                }
+
+                if (peek_byte() == '\"')
+                {
+
+                    lexeme_buffer += consume();
+                    lexemes.push_back(lexeme_buffer);
+                    lexeme_buffer.clear();
+
+                    while (peek_byte() != '\"')
+                    {
+                        lexeme_buffer += consume();
+                    }
+
+                    lexemes.push_back(lexeme_buffer);
+                    lexeme_buffer.clear();
+
+                    lexeme_buffer += consume();
+                    lexemes.push_back(lexeme_buffer);
+                    lexeme_buffer.clear();
+                }
                 if (peek_byte() == ' ' || peek_byte() == '\n')
                 {
                     if (!lexeme_buffer.empty())
