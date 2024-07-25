@@ -8,6 +8,7 @@ void begin_process(const std::string &file_path)
     MFILESYSTEM::ByteArray file_content_bytes = file.get_content_bytes();
     MPROCESS::Interpreter *interpreter = new MPROCESS::Interpreter(file_content_bytes);
     interpreter->view_lexeme_content();
+    interpreter->view_token_content();
     // we want to pass this src to some FileData class that handles all the metadata of the file itself : file size , the byte buffer, byte-order-mark etc...
 };
 

@@ -3,6 +3,7 @@
 #include <vector>
 #include "frontend/file_info.hpp"
 #include "frontend/lexer.hpp"
+#include "frontend/tokenizer.hpp"
 #include <memory>
 
 // propogate error state up to Interpreter
@@ -14,16 +15,26 @@ namespace MPROCESS
     {
         MFILESYSTEM::ByteArray bytes_to_interpret;
         std::unique_ptr<Lexer> lexer;
+        std::unique_ptr<Tokenizer> tokenizer;
 
     public:
         Interpreter(MFILESYSTEM::ByteArray bytes)
         {
             this->bytes_to_interpret = bytes;
             lexer = std::make_unique<Lexer>(bytes);
-            // tokenizer = std::make_unique<Tokenizer>(lexer->GetLexemes());
+            tokenizer = std::make_unique<Tokenizer>(lexer->get_lexemes());
         }
 
-        void view_lexeme_content()
+        void view_token_content() const
+        {
+            std::cout << tokenizer->get_tokens().size();
+            for (auto &token : tokenizer->get_tokens())
+            {
+                std::cout << "[TOKEN] type : " << (int)token.type << " | value : " << token.value << std::endl;
+            }
+        }
+
+        void view_lexeme_content() const
         {
             for (auto &lexeme : lexer->get_lexemes())
             {
