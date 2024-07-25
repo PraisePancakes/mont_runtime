@@ -5,6 +5,9 @@
 #include "frontend/lexer.hpp"
 #include <memory>
 
+// propogate error state up to Interpreter
+// Interpreter dispathes error state
+
 namespace MPROCESS
 {
     class Interpreter
@@ -17,12 +20,14 @@ namespace MPROCESS
         {
             this->bytes_to_interpret = bytes;
             lexer = std::make_unique<Lexer>(bytes);
+            // tokenizer = std::make_unique<Tokenizer>(lexer->GetLexemes());
         }
 
         void view_lexeme_content()
         {
             for (auto &lexeme : lexer->get_lexemes())
             {
+
                 std::cout << "lexeme : " << lexeme << std::endl;
             }
         };

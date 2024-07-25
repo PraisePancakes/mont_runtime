@@ -21,13 +21,13 @@ namespace MPROCESS
         LexemeVector lexemes;
         size_t current_byte_cursor;
         /*
-            the current byte cursor will hold the state used by the peek and consume method which will ultimately traverse the bytes by themselves.
+            the current byte cursor will hold the index used by the peek and consume method which will ultimately traverse the bytes by themselves.
         */
         MFILESYSTEM::ByteArray bytes;
 
         bool is_delimeter(unsigned char byte) const
         {
-            if (byte == ';' || byte == '(' || byte == ')' || byte == '{' || byte == '}')
+            if (byte == ';' || byte == '(' || byte == ')' || byte == '{' || byte == '}' || byte == ',')
             {
                 return true;
             };
@@ -37,40 +37,26 @@ namespace MPROCESS
 
         void lex(MFILESYSTEM::ByteArray bytes_to_lex)
         {
+
             // bytes_to_lex = ['t', 'h', 'i', 's', ' ', 'i' , 's', ' ' , 'a', 't', 'e', 's', 't'];
             std::string lexeme_buffer = ""; // traverse until a delimeter OR a whitespace character has been reached. if reached -> create a lexeme and push to lex vector
                                             // to traverse rely soley on peek and consume
                                             // peek->consume : peek->consume
+
             while (current_byte_cursor < bytes_to_lex.size())
             {
-                if (peek_byte() == ' ' || peek_byte() == '\r')
+                if (peek_byte() == ' ' || peek_byte() == '\n')
                 {
                     if (!lexeme_buffer.empty())
                     {
                         lexemes.push_back(lexeme_buffer);
                         lexeme_buffer.clear();
                     }
-                    while (peek_byte() == ' ' || peek_byte() == '\n')
-                    {
-                        consume();
-                    }
+                    consume();
                 }
-                else if (is_delimeter(peek_byte()))
+                else
                 {
-
-                    lexemes.push_back(lexeme_buffer);
-                    lexeme_buffer.clear();
-                }
-                lexeme_buffer += peek_byte();
-                consume();
-
-                if (current_byte_cursor == bytes_to_lex.size())
-                {
-                    if (!lexeme_buffer.empty())
-                    {
-                        lexemes.push_back(lexeme_buffer);
-                        lexeme_buffer.clear();
-                    }
+                    lexeme_buffer += consume();
                 }
             }
         };
@@ -81,8 +67,12 @@ namespace MPROCESS
             this->bytes = bytes_to_lex;
             current_byte_cursor = 0;
             lex(bytes_to_lex);
-        }
+        };
 
+        unsigned char peek_byte(size_t offset)
+        {
+            return bytes[current_byte_cursor + offset];
+        };
         unsigned char peek_byte()
         {
             return bytes[current_byte_cursor];
