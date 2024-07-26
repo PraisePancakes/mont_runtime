@@ -111,6 +111,16 @@ namespace MPROCESS
                     }
                 }
 
+                if (peek_byte() == '/' && peek_byte(1) == '*')
+                {
+                    consume();
+                    consume();
+                    while (peek_byte() != '*' && peek_byte(1) != '/')
+                    {
+                        consume();
+                    }
+                }
+
                 if (peek_byte() == ' ' || peek_byte() == '\n')
                 {
 
