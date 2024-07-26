@@ -188,8 +188,6 @@ namespace MPROCESS
                     type = TOKEN_TYPE::TOK_IDENTIFIER;
                 }
 
-                
-
                 tokens.push_back({type, lexeme_item});
             }
         };

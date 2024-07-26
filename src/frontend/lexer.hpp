@@ -102,8 +102,18 @@ namespace MPROCESS
                     lexeme_buffer += consume();
                     ship_lexeme(line, position, lexeme_buffer);
                 }
+
+                if (peek_byte() == '/' && peek_byte(1) == '/')
+                {
+                    while (peek_byte() != '\n')
+                    {
+                        consume();
+                    }
+                }
+
                 if (peek_byte() == ' ' || peek_byte() == '\n')
                 {
+
                     if (peek_byte() == '\n')
                     {
                         line++;
