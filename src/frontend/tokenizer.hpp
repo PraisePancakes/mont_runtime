@@ -183,6 +183,25 @@ namespace MPROCESS
                     type = TOKEN_TYPE::TOK_PRINT;
                 }
 
+                if (lexemes[i].lexeme == "/")
+                {
+                    type = TOKEN_TYPE::TOK_DIV;
+                }
+
+                if (lexemes[i].lexeme[0] >= '0' && lexemes[i].lexeme[0] <= '9')
+                {
+
+                    for (size_t j = 0; j < lexemes[i].lexeme.length(); j++)
+                    {
+                        if (!std::isdigit(lexemes[i].lexeme[j]))
+                        {
+                            // report error : unexpected value type
+                        }
+                    }
+
+                    type = TOKEN_TYPE::TOK_INT_LIT;
+                }
+
                 if (type == TOKEN_TYPE::TOK_ERROR)
                 {
                     type = TOKEN_TYPE::TOK_IDENTIFIER;
