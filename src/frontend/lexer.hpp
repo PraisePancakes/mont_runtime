@@ -119,6 +119,8 @@ namespace MPROCESS
                     {
                         consume();
                     }
+                    consume();
+                    consume();
                 }
 
                 if (peek_byte() == ' ' || peek_byte() == '\n')
