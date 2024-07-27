@@ -46,7 +46,7 @@ namespace MPROCESS
         */
         MFILESYSTEM::ByteArray bytes;
 
-        bool is_delimeter(unsigned char byte) const
+        [[nodiscard]] bool is_delimeter(unsigned char byte) const
         {
             if (byte == ';' || byte == '(' || byte == ')' || byte == '{' || byte == '}' || byte == ',')
             {
@@ -156,11 +156,11 @@ namespace MPROCESS
             lex(bytes_to_lex);
         };
 
-        unsigned char peek_byte(size_t offset)
+        [[nodiscard]] unsigned char peek_byte(size_t offset) const
         {
             return bytes[current_byte_cursor + offset];
         };
-        unsigned char peek_byte()
+        [[nodiscard]] unsigned char peek_byte() const
         {
             return bytes[current_byte_cursor];
         }
@@ -170,7 +170,7 @@ namespace MPROCESS
             return bytes[current_byte_cursor++];
         }
 
-        LexemeVector const &get_lexemes() const
+        [[nodiscard]] LexemeVector const &get_lexemes() const
         {
             return lexemes;
         }

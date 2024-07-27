@@ -63,7 +63,7 @@ namespace MPROCESS
         LexemeVector lexemes;
         std::vector<Token> tokens;
 
-        bool validate_identifier_token(const std::string &tok)
+        [[nodiscard]] bool validate_identifier_token(const std::string &tok) const
         {
             if (tok.empty())
                 return false;
@@ -243,7 +243,7 @@ namespace MPROCESS
             tokenize(lexemes_to_tokenize);
         };
 
-        std::vector<Token> const &get_tokens() const
+        [[nodiscard]] std::vector<Token> const &get_tokens() const
         {
             return tokens;
         };
