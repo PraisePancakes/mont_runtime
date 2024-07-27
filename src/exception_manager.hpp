@@ -2,20 +2,24 @@
 #include <vector>
 #include <iostream>
 
-namespace MEXCEPT
+namespace MPROCESS
 {
-    class Exception
+    namespace MEXCEPT
     {
-    };
+        class Exception
+        {
+        };
 
-    class ExceptionManager
-    {
-        std::vector<Exception> exception_list;
+        class ExceptionManager
+        {
+            std::vector<Exception> exception_list;
 
-    public:
-        ExceptionManager() {};
+        public:
+            ExceptionManager() {};
 
-        ~ExceptionManager() {};
-    };
+            ~ExceptionManager() {};
+        };
+
+    }
 
 }

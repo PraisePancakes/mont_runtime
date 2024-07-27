@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include "file_info.hpp"
+#include "../error_manager.hpp"
 
 /*
     A lexeme in the case of this interpreter will be just a squence of "words" with no meaning other than the fact that its a sequence of characters that
@@ -21,13 +22,13 @@ namespace MPROCESS
     {
         int line;
         int position;
-        std::string lexeme;
+        std::string value;
 
         LexemeItem(int line, int pos, std::string lexeme)
         {
             this->line = line;
             this->position = pos;
-            this->lexeme = lexeme;
+            this->value = lexeme;
         };
 
         ~LexemeItem() {};
@@ -38,6 +39,8 @@ namespace MPROCESS
     {
         LexemeVector lexemes;
         size_t current_byte_cursor;
+        std::shared_ptr<MERROR::ErrorManager> error_manager;
+
         /*
             the current byte cursor will hold the index used by the peek and consume method which will ultimately traverse the bytes by themselves.
         */
@@ -60,9 +63,8 @@ namespace MPROCESS
             buffer = "";
         }
 
-        void lex(MFILESYSTEM::ByteArray bytes_to_lex)
+        void lex(const MFILESYSTEM::ByteArray &bytes_to_lex)
         {
-
             // bytes_to_lex = ['t', 'h', 'i', 's', ' ', 'i' , 's', ' ' , 'a', 't', 'e', 's', 't'];
             std::string lexeme_buffer = ""; // traverse until a delimeter OR a whitespace character has been reached. if reached -> create a lexeme and push to lex vector
                                             // to traverse rely soley on peek and consume
@@ -147,7 +149,7 @@ namespace MPROCESS
         };
 
     public:
-        Lexer(MFILESYSTEM::ByteArray bytes_to_lex)
+        Lexer(const MFILESYSTEM::ByteArray &bytes_to_lex)
         {
             this->bytes = bytes_to_lex;
             current_byte_cursor = 0;
