@@ -31,6 +31,8 @@ namespace MPROCESS
             this->value = lexeme;
         };
 
+        LexemeItem() {};
+
         ~LexemeItem() {};
     };
 

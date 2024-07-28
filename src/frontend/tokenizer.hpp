@@ -148,6 +148,11 @@ namespace MPROCESS
                     type = TOKEN_TYPE::TOK_DIV;
                 }
 
+                if (lexemes[i].value == "*")
+                {
+                    type = TOKEN_TYPE::TOK_MULT;
+                }
+
                 if (lexemes[i].value == "\"")
                 {
                     type = TOKEN_TYPE::TOK_STRING_LIT;
@@ -243,7 +248,7 @@ namespace MPROCESS
             tokenize(lexemes_to_tokenize);
         };
 
-        [[nodiscard]] std::vector<Token> const &get_tokens() const
+        [[nodiscard]] std::vector<Token> &get_tokens()
         {
             return tokens;
         };
