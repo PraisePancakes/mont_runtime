@@ -3,6 +3,7 @@
 #include <vector>
 #include "file_info.hpp"
 #include "../error_manager.hpp"
+#include "interfaces/lexeme.hpp"
 
 /*
     A lexeme in the case of this interpreter will be just a squence of "words" with no meaning other than the fact that its a sequence of characters that
@@ -18,25 +19,7 @@
 namespace MPROCESS
 {
 
-    struct LexemeItem
-    {
-        int line;
-        int position;
-        std::string value;
-
-        LexemeItem(int line, int pos, std::string lexeme)
-        {
-            this->line = line;
-            this->position = pos;
-            this->value = lexeme;
-        };
-
-        LexemeItem() {};
-
-        ~LexemeItem() {};
-    };
-
-    using LexemeVector = std::vector<LexemeItem>;
+    using LexemeVector = std::vector<ILexeme>;
     class Lexer
     {
         LexemeVector lexemes;
@@ -48,133 +31,20 @@ namespace MPROCESS
         */
         MFILESYSTEM::ByteArray bytes;
 
-        [[nodiscard]] bool is_delimeter(unsigned char byte) const
-        {
-            if (byte == ';' || byte == '(' || byte == ')' || byte == '{' || byte == '}' || byte == ',')
-            {
-                return true;
-            };
+        [[nodiscard]] bool is_delimeter(unsigned char byte) const;
 
-            return false;
-        };
+        void ship_lexeme(int line, int pos, std::string &buffer);
 
-        void ship_lexeme(int line, int pos, std::string &buffer)
-        {
-            LexemeItem item(line, pos, buffer);
-            lexemes.push_back(item);
-            buffer = "";
-        }
-
-        void lex(const MFILESYSTEM::ByteArray &bytes_to_lex)
-        {
-            // bytes_to_lex = ['t', 'h', 'i', 's', ' ', 'i' , 's', ' ' , 'a', 't', 'e', 's', 't'];
-            std::string lexeme_buffer = ""; // traverse until a delimeter OR a whitespace character has been reached. if reached -> create a lexeme and push to lex vector
-                                            // to traverse rely soley on peek and consume
-
-            int line = 1;
-            int position = 1;
-
-            while (current_byte_cursor < bytes_to_lex.size())
-            {
-                if (is_delimeter(peek_byte()))
-                {
-                    if (!lexeme_buffer.empty())
-                    {
-                        ship_lexeme(line, position, lexeme_buffer);
-                    }
-                    position++;
-                    lexeme_buffer += consume();
-                    ship_lexeme(line, position, lexeme_buffer);
-                }
-
-                if (peek_byte() == '\"')
-                {
-
-                    position++;
-                    lexeme_buffer += consume();
-                    ship_lexeme(line, position, lexeme_buffer);
-
-                    while (peek_byte() != '\"')
-                    {
-                        position++;
-                        lexeme_buffer += consume();
-                    }
-
-                    ship_lexeme(line, position, lexeme_buffer);
-
-                    position++;
-                    lexeme_buffer += consume();
-                    ship_lexeme(line, position, lexeme_buffer);
-                }
-
-                if (peek_byte() == '/' && peek_byte(1) == '/')
-                {
-                    while (peek_byte() != '\n')
-                    {
-                        consume();
-                    }
-                }
-
-                if (peek_byte() == '/' && peek_byte(1) == '*')
-                {
-                    consume();
-                    consume();
-                    while (peek_byte() != '*' && peek_byte(1) != '/')
-                    {
-                        consume();
-                    }
-                    consume();
-                    consume();
-                }
-
-                if (peek_byte() == ' ' || peek_byte() == '\n')
-                {
-
-                    if (peek_byte() == '\n')
-                    {
-                        line++;
-                        position = 0;
-                    }
-                    if (!lexeme_buffer.empty())
-                    {
-                        ship_lexeme(line, position, lexeme_buffer);
-                    }
-                    position++;
-                    consume();
-                }
-                else
-                {
-                    position++;
-                    lexeme_buffer += consume();
-                }
-            }
-        };
+        void lex(const MFILESYSTEM::ByteArray &bytes_to_lex);
 
     public:
-        Lexer(const MFILESYSTEM::ByteArray &bytes_to_lex)
-        {
-            this->bytes = bytes_to_lex;
-            current_byte_cursor = 0;
-            lex(bytes_to_lex);
-        };
+        Lexer(const MFILESYSTEM::ByteArray &bytes_to_lex);
 
-        [[nodiscard]] unsigned char peek_byte(size_t offset) const
-        {
-            return bytes[current_byte_cursor + offset];
-        };
-        [[nodiscard]] unsigned char peek_byte() const
-        {
-            return bytes[current_byte_cursor];
-        }
+        [[nodiscard]] unsigned char peek_byte(size_t offset) const;
+        [[nodiscard]] unsigned char peek_byte() const;
 
-        unsigned char consume()
-        {
-            return bytes[current_byte_cursor++];
-        }
+        unsigned char consume();
 
-        [[nodiscard]] LexemeVector const &get_lexemes() const
-        {
-            return lexemes;
-        }
+        [[nodiscard]] LexemeVector const &get_lexemes() const;
     };
 }

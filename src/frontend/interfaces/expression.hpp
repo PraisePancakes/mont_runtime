@@ -1,78 +1,79 @@
 #pragma once
-#include <iostream>
-#include "../tokenizer.hpp"
-#include "../expression_visitor.hpp"
+#include "token.hpp"
 
-class Expression
+namespace MPROCESS
 {
-public:
-    Expression() {};
-
-    virtual void accept(ExpressionVisitor *visitor) = 0;
-    // virtual bool operate() = 0;
-    ~Expression() {};
-};
-
-class Binary final : public Expression
-{
-    Expression *left_child{nullptr};
-    MPROCESS::Token binary_operator;
-    Expression *right_child{nullptr};
-
-public:
-    Binary(Expression *left, MPROCESS::Token bin_op, Expression *right)
+    class IBaseExpr
     {
-        this->left_child = left;
-        this->binary_operator = bin_op;
-        this->right_child = right;
+    public:
+        IBaseExpr() {};
+        ~IBaseExpr() {};
     };
 
-    void accept(ExpressionVisitor *visitor) override {
+    // expressions can be null
 
+    class Binary final : public IBaseExpr
+    {
+    public:
+        IBaseExpr *left_op;
+        IToken *op_tok;
+        IBaseExpr *right_op;
+
+        Binary(IBaseExpr *left, IToken *op, IBaseExpr *right)
+        {
+            this->left_op = left;
+            this->op_tok = op;
+            this->right_op = right;
+        };
+
+        Binary()
+        {
+            this->left_op = nullptr;
+            this->right_op = nullptr;
+            this->op_tok = nullptr;
+        };
+
+        ~Binary() = default;
     };
-    /*
-     bool operate() {};
-     take the left, determine the middle, based on the middle operate with right
-    */
-    ~Binary() {};
-};
 
-class Group final : public Expression
-{
-    MPROCESS::Token *left_paren;
-    Expression *expr;
-    MPROCESS::Token *right_paren;
+    class Unary final : public IBaseExpr
+    {
+    public:
+        IToken *op_tok;
+        IBaseExpr *right_op;
 
-public:
-    Group() {};
-    void accept(ExpressionVisitor *visitor) override {
+        Unary(IToken *tok, IBaseExpr *right) : op_tok(tok), right_op(right) {};
 
+        ~Unary() {};
     };
-    ~Group() {};
-};
 
-class Unary final : public Expression
-{
-    MPROCESS::Token *unary_operator;
-    Expression *expr;
+    class Grouping final : public IBaseExpr
+    {
 
-public:
-    Unary() {};
+    public:
+        IBaseExpr *expr;
+        Grouping(IBaseExpr *group_expr)
+        {
+            this->expr = group_expr;
+        };
 
-    void accept(ExpressionVisitor *visitor) override {
-
+        ~Grouping() {};
     };
-    ~Unary() {};
-};
 
-class Literal final : public Expression
-{
-    MPROCESS::Token *value;
+    class Literal final : public IBaseExpr
+    {
+    public:
+        void *value;
+        Literal(void *literal_val)
+        {
+            this->value = literal_val;
+        };
 
-public:
-    Literal() {};
-    void accept(ExpressionVisitor *visitor) override {
+        Literal()
+        {
+            value = nullptr;
+        }
 
+        ~Literal() {};
     };
-    ~Literal() {};
-};
+}
