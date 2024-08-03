@@ -1,15 +1,25 @@
 #pragma once
 #include <variant>
 
-class Binary;
-class Unary;
-
-using Expression = std::variant<Binary, Unary>;
-
-class IExprVisitor
+namespace MPROCESS
 {
-public:
-    virtual void visit(Binary &expr) = 0;
-    virtual void visit(Unary &expr) = 0;
-    virtual ~IExprVisitor() = default;
-};
+
+    class Binary;
+    class Unary;
+    class Literal;
+    class Grouping;
+
+    template <typename T>
+    class IExprVisitor
+    {
+
+    public:
+        virtual T visitBinary(Binary &expr) = 0;
+        virtual T visitUnary(Unary &expr) = 0;
+        virtual T visitLiteral(Literal &expr) = 0;
+        virtual T visitGrouping(Grouping &expr) = 0;
+
+        virtual ~IExprVisitor() = default;
+    };
+
+}

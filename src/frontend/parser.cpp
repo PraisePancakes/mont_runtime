@@ -35,7 +35,7 @@ MPROCESS::IBaseExpr *MPROCESS::Parser::primary()
     if (match_token_to_current({TOKEN_TYPE::TOK_LPAREN}))
     {
         MPROCESS::IBaseExpr *expr = expression();
-        parser_consume(MPROCESS::TOKEN_TYPE::TOK_RPAREN, "Expect ')' after expression.");
+        parser_consume(MPROCESS::TOKEN_TYPE::TOK_RPAREN, "Expected ')' after expression.");
         return new Grouping(expr);
     }
 

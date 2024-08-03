@@ -1,14 +1,9 @@
 #pragma once
 #include "token.hpp"
-
+#include "visitor.hpp"
+#include "expression_base.hpp"
 namespace MPROCESS
 {
-    class IBaseExpr
-    {
-    public:
-        IBaseExpr() {};
-        ~IBaseExpr() {};
-    };
 
     // expressions can be null
 
@@ -19,32 +14,34 @@ namespace MPROCESS
         IToken *op_tok;
         IBaseExpr *right_op;
 
-        Binary(IBaseExpr *left, IToken *op, IBaseExpr *right)
+        Binary(IBaseExpr *left, IToken *op, IBaseExpr *right);
+
+        Binary();
+
+        template <class T>
+        T accept(IExprVisitor<T> &vis)
         {
-            this->left_op = left;
-            this->op_tok = op;
-            this->right_op = right;
+            return vis.visitBinary(*this);
         };
 
-        Binary()
-        {
-            this->left_op = nullptr;
-            this->right_op = nullptr;
-            this->op_tok = nullptr;
-        };
-
-        ~Binary() = default;
+        ~Binary();
     };
 
     class Unary final : public IBaseExpr
     {
+        IBaseExpr *right;
+        IToken *op;
+
     public:
-        IToken *op_tok;
-        IBaseExpr *right_op;
+        Unary(IToken *op, IBaseExpr *right);
 
-        Unary(IToken *tok, IBaseExpr *right) : op_tok(tok), right_op(right) {};
+        template <class T>
+        T accept(IExprVisitor<T> &vis)
+        {
+            return vis.visitUnary(*this);
+        };
 
-        ~Unary() {};
+        ~Unary();
     };
 
     class Grouping final : public IBaseExpr
@@ -52,28 +49,31 @@ namespace MPROCESS
 
     public:
         IBaseExpr *expr;
-        Grouping(IBaseExpr *group_expr)
+        Grouping(IBaseExpr *group_expr);
+
+        template <class T>
+        T accept(IExprVisitor<T> &vis)
         {
-            this->expr = group_expr;
+            return vis.visitGrouping(*this);
         };
 
-        ~Grouping() {};
+        ~Grouping();
     };
 
     class Literal final : public IBaseExpr
     {
     public:
         void *value;
-        Literal(void *literal_val)
+        Literal(void *literal_val);
+
+        Literal();
+
+        template <class T>
+        T accept(IExprVisitor<T> &vis)
         {
-            this->value = literal_val;
+            return vis.visitLiteral(*this);
         };
 
-        Literal()
-        {
-            value = nullptr;
-        }
-
-        ~Literal() {};
+        ~Literal();
     };
 }

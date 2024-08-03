@@ -6,6 +6,7 @@
 #include "frontend/tokenizer.hpp"
 #include "frontend/parser.hpp"
 #include "error_manager.hpp"
+
 #include <memory>
 
 // propogate error state up to Interpreter

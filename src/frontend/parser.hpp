@@ -45,7 +45,10 @@ namespace MPROCESS
 
     public:
         Parser(const std::vector<IToken *> &tokens);
-
+        IBaseExpr *parser_parse()
+        {
+            return expression();
+        };
         ~Parser();
     };
 }
