@@ -13,11 +13,15 @@ namespace MPROCESS
         {
 
             ByteArray bytes;
-            void read_bytes(const std::string &file_path);
+            bool read_bytes(const std::string &file_path);
 
         public:
             MFile(const std::string &file_path);
-
+            MFile() {};
+            bool init(const std::string &file_path)
+            {
+                return read_bytes(file_path);
+            };
             ByteArray &get_content_bytes();
 
             void view_contents(bool BY_LINE) const;

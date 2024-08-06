@@ -7,7 +7,7 @@ project(PROJECT_NAME, VERSION 0.0.1)
 add_executable(
     EXEC 
     src/main.cpp 
-    src/interpreter.cpp 
+    
     src/error_manager.cpp 
     src/error.cpp 
     src/frontend/tokenizer.cpp 
@@ -17,4 +17,6 @@ add_executable(
     src/frontend/interfaces/expression.cpp 
     src/frontend/interfaces/lexeme.hpp
     src/frontend/interfaces/token.hpp
+    src/interpreter.cpp
+    src/frontend/parser_error.hpp
     )

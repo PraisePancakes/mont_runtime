@@ -151,6 +151,7 @@ MPROCESS::Parser::Parser(const std::vector<IToken *> &tokens)
 {
     this->tokens_to_parse = tokens;
     current_token_index = 0;
+    parser_error_manager = new ParserError();
 };
 
 MPROCESS::Parser::~Parser() {};

@@ -1,14 +1,13 @@
 #include "file_info.hpp"
 
-void MPROCESS::MFILESYSTEM::MFile::read_bytes(const std::string &file_path)
+bool MPROCESS::MFILESYSTEM::MFile::read_bytes(const std::string &file_path)
 {
     std::ifstream file;
     file.open(file_path);
 
     if (!file)
     {
-        throw std::runtime_error("MONT ERROR : file is null");
-        exit(EXIT_FAILURE);
+        return false;
     }
 
     char byte;
@@ -16,6 +15,7 @@ void MPROCESS::MFILESYSTEM::MFile::read_bytes(const std::string &file_path)
     {
         bytes.push_back(byte);
     }
+    return true;
 }
 
 MPROCESS::MFILESYSTEM::MFile::MFile(const std::string &file_path)

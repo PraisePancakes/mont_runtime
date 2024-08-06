@@ -1,7 +1,7 @@
 #include "lexer.hpp"
 
 /*
-    A lexeme in the case of this interpreter will be just a squence of "words" with no meaning other than the fact that its a sequence of characters that
+    A lexeme in the case of this interpreter will be just a squence of characters (ignoring whitespaces, delimiters exclusive) with no meaning other than the fact that its a sequence of characters that
     terminates once a white space has been encountered.
     For example :
     input : This is a list of lexemes

@@ -60,7 +60,7 @@ namespace MPROCESS
         ~Grouping();
     };
 
-    class Literal final : public IBaseExpr
+      class Literal final : public IBaseExpr
     {
     public:
         void *value;

@@ -3,6 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <initializer_list>
+#include "parser_error.hpp"
 
 namespace MPROCESS
 {
@@ -22,10 +23,22 @@ namespace MPROCESS
         IToken *parser_previous();
 
         IToken *parser_consume(TOKEN_TYPE type, std::string exception);
+        ParserError *parser_error_manager;
+        ParserError error(IToken *token, const std::string &message)
+        {
 
+            return {};
+        };
         bool check_type(TOKEN_TYPE type);
         IToken *parser_advance();
 
+        /*
+            @usage
+            @initializer_list<T>
+            the initializer_list deduces to a single type which has to be a TOKEN_TYPE
+
+
+        */
         template <typename T>
         inline bool match_token_to_current(std::initializer_list<T> token_types)
         {
