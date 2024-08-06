@@ -1,5 +1,5 @@
 #include "tokenizer.hpp"
-
+#include "../mont.hpp"
 bool MPROCESS::Tokenizer::validate_identifier_token(const std::string &tok) const
 {
     if (tok.empty())
@@ -42,7 +42,7 @@ bool MPROCESS::Tokenizer::is_number(const ILexeme &lexeme_data)
     {
         if (!is_digit(c) && c != '.')
         {
-            em->push_error("Unexpected character", lexeme_data.line, lexeme_data.position);
+            Mont::instance().report(lexeme_data.line, lexeme_data.position, "Unexpected character");
             return false;
         }
     }
@@ -141,7 +141,7 @@ void MPROCESS::Tokenizer::tokenize()
             }
             if (tokenizer_is_at_end())
             {
-                em->push_error("Unterminated string", lexemes[lexeme_cursor].line, lexemes[lexeme_cursor].position);
+                Mont::instance().report(lexemes[lexeme_cursor].line, lexemes[lexeme_cursor].position, "Unterminated string");
             }
             else
             {
@@ -170,6 +170,10 @@ void MPROCESS::Tokenizer::tokenize()
             {
                 push_token(TOKEN_TYPE::TOK_IDENTIFIER, lexeme_data);
             }
+            else
+            {
+                Mont::instance().report(lexeme_data.line, lexeme_data.position, "Unexpected character");
+            }
         }
         this->lexeme_cursor++;
     }
@@ -178,9 +182,9 @@ void MPROCESS::Tokenizer::tokenize()
     tokens.push_back(new IToken(TOKEN_TYPE::TOK_EOF, {}, nullptr));
 }
 
-MPROCESS::Tokenizer::Tokenizer(const LexemeVector &lexemes_to_tokenize, std::shared_ptr<MERROR::ErrorManager> error_manager)
+MPROCESS::Tokenizer::Tokenizer(const LexemeVector &lexemes_to_tokenize)
 {
-    this->em = error_manager;
+
     lexemes = lexemes_to_tokenize;
     lexeme_cursor = 0;
 

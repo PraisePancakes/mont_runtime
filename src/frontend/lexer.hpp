@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 #include "file_info.hpp"
-#include "../error_manager.hpp"
+
 #include "interfaces/lexeme.hpp"
 
 /*
@@ -24,7 +24,6 @@ namespace MPROCESS
     {
         LexemeVector lexemes;
         size_t current_byte_cursor;
-        std::shared_ptr<MERROR::ErrorManager> error_manager;
 
         /*
             the current byte cursor will hold the index used by the peek and consume method which will ultimately traverse the bytes by themselves.

@@ -29,10 +29,8 @@ namespace MPROCESS
         bool is_number(const ILexeme &lexeme_data);
         void tokenize();
 
-        std::shared_ptr<MERROR::ErrorManager> em;
-
     public:
-        Tokenizer(const LexemeVector &lexemes_to_tokenize, std::shared_ptr<MERROR::ErrorManager> error_manager);
+        Tokenizer(const LexemeVector &lexemes_to_tokenize);
 
         [[nodiscard]] std::vector<IToken *> &get_tokens();
 

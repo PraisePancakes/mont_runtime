@@ -4,7 +4,6 @@
 #include "frontend/lexer.hpp"
 #include "frontend/tokenizer.hpp"
 #include "frontend/parser.hpp"
-#include "error_manager.hpp"
 
 static bool had_ct_error = false;
 static bool had_rt_error = false;
@@ -12,16 +11,16 @@ static bool had_rt_error = false;
 class Mont
 {
     MPROCESS::MFILESYSTEM::MFile file_reader;
-    std::shared_ptr<MPROCESS::MERROR::ErrorManager> em;
+
     MPROCESS::Lexer *lexer;
     MPROCESS::Tokenizer *tokenizer;
     MPROCESS::Parser *parser;
 
     void run(MPROCESS::MFILESYSTEM::ByteArray bytes)
     {
-        this->em = std::make_shared<MPROCESS::MERROR::ErrorManager>();
+
         lexer = new MPROCESS::Lexer(bytes);
-        tokenizer = new MPROCESS::Tokenizer(lexer->get_lexemes(), em);
+        tokenizer = new MPROCESS::Tokenizer(lexer->get_lexemes());
         parser = new MPROCESS::Parser(tokenizer->get_tokens());
 
         if (had_ct_error || had_rt_error)
@@ -37,14 +36,32 @@ class Mont
         report(line, pos, what);
     };
 
+    Mont() {};
+
+    ~Mont()
+    {
+        delete lexer;
+        delete tokenizer;
+        delete parser;
+    };
+
+public:
+    static Mont &instance()
+    {
+        static Mont instance;
+
+        return instance;
+    };
+
+    Mont(const Mont &other) = delete;
+    Mont &operator=(const Mont &other) = delete;
+
     void report(int line, int pos, const std::string &what)
     {
         std::cerr << "[line " << line << " : " << pos << " ] error : " << what << std::endl;
         had_ct_error = true;
     };
 
-public:
-    Mont() {};
     void run_file(const std::string &src)
     {
 
