@@ -15,5 +15,6 @@ add_executable(
     src/frontend/interfaces/lexeme.hpp
     src/frontend/interfaces/token.hpp
     src/interpreter.cpp
+    src/mont.cpp
     src/frontend/parser_error.hpp
     )
