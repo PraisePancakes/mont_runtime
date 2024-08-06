@@ -92,4 +92,19 @@ namespace MPROCESS
             return this->initializer;
         };
     };
+
+    class If : public IBaseStmt
+    {
+        IBaseExpr *condition;
+        IBaseStmt *else_branch;
+        IBaseStmt *then_branch;
+
+    public:
+        If(IBaseExpr *condition, IBaseStmt *else_branch, IBaseStmt *then_branch)
+        {
+            this->condition = condition;
+            this->else_branch = else_branch;
+            this->then_branch = then_branch;
+        };
+    };
 };

@@ -32,6 +32,17 @@ class Mont
         // MPROCESS::Interpreter* interp = new MPROCESS::Interpreter(statements);
     };
 
+    void error(int line, int pos, const std::string &what)
+    {
+        report(line, pos, what);
+    };
+
+    void report(int line, int pos, const std::string &what)
+    {
+        std::cerr << "[line " << line << " : " << pos << " ] error : " << what << std::endl;
+        had_ct_error = true;
+    };
+
 public:
     Mont() {};
     void run_file(const std::string &src)
@@ -61,14 +72,18 @@ public:
         }
     };
 
-    void view_lexeme_content() const {};
-
-    void run_repl()
+    void view_lexeme_content() const
     {
         for (auto &lexeme : lexer->get_lexemes())
         {
 
             std::cout << "lexeme : " << lexeme.value << std::endl;
         }
+    };
+
+    void run_repl()
+    {
+        had_ct_error = false;
+        had_rt_error = false;
     };
 };
