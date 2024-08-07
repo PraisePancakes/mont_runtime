@@ -1,11 +1,44 @@
 #include "parser.hpp"
+#include "../mont.hpp"
 
 MPROCESS::IToken *MPROCESS::Parser::parser_consume(TOKEN_TYPE type, std::string exception)
 {
     if (check_type(type))
         return parser_advance();
 
-    return nullptr;
+    throw error(parser_peek(), exception);
+};
+
+void MPROCESS::Parser::parser_synchronize()
+{
+
+    parser_advance();
+
+    if (parser_previous()->type == TOKEN_TYPE::TOK_SEMI)
+    {
+        return;
+    }
+
+    switch (parser_peek()->type)
+    {
+    case TOKEN_TYPE::TOK_CLASS:
+    case TOKEN_TYPE::TOK_IF:
+    case TOKEN_TYPE::TOK_FN:
+    case TOKEN_TYPE::TOK_PRINT:
+    case TOKEN_TYPE::TOK_WHILE:
+    case TOKEN_TYPE::TOK_RETURN:
+    case TOKEN_TYPE::TOK_FOR:
+    case TOKEN_TYPE::TOK_VAR:
+        return;
+    }
+
+    parser_advance();
+};
+
+MPROCESS::ParserError *MPROCESS::Parser::error(IToken *token, const std::string &message)
+{
+    Mont::instance().error(token, message);
+    return new ParserError();
 };
 
 MPROCESS::IBaseExpr *MPROCESS::Parser::primary()
@@ -39,7 +72,7 @@ MPROCESS::IBaseExpr *MPROCESS::Parser::primary()
         return new Grouping(expr);
     }
 
-    return nullptr;
+    throw error(parser_peek(), "Expected an expression");
 };
 
 MPROCESS::IBaseExpr *MPROCESS::Parser::unary()

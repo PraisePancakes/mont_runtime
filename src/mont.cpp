@@ -6,7 +6,8 @@ void Mont::run(MPROCESS::MFILESYSTEM::ByteArray bytes)
     lexer = new MPROCESS::Lexer(bytes);
     tokenizer = new MPROCESS::Tokenizer(lexer->get_lexemes());
     parser = new MPROCESS::Parser(tokenizer->get_tokens());
-
+    MPROCESS::IBaseExpr *expr = parser->parser_parse();
+    
     if (had_ct_error || had_rt_error)
     {
         return;
@@ -15,17 +16,17 @@ void Mont::run(MPROCESS::MFILESYSTEM::ByteArray bytes)
     // MPROCESS::Interpreter* interp = new MPROCESS::Interpreter(statements);
 };
 
-void Mont::error(MPROCESS::IToken &token, const std::string &what)
+void Mont::error(const MPROCESS::IToken *token, const std::string &what) const
 {
-    report(token.lexeme_data.line, token.lexeme_data.position, what);
+    report(token->lexeme_data.line, token->lexeme_data.position, what);
 };
 
-void Mont::error(int line, int pos, const std::string &what)
+void Mont::error(int line, int pos, const std::string &what) const
 {
     report(line, pos, what);
 };
 
-void Mont::report(int line, int pos, const std::string &what)
+void Mont::report(int line, int pos, const std::string &what) const
 {
     std::cerr << "[line " << line << " : " << pos << " ] error : " << what << std::endl;
     had_ct_error = true;

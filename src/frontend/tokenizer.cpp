@@ -42,7 +42,7 @@ bool MPROCESS::Tokenizer::is_number(const ILexeme &lexeme_data)
     {
         if (!is_digit(c) && c != '.')
         {
-            Mont::instance().report(lexeme_data.line, lexeme_data.position, "Unexpected character");
+            Mont::instance().error(lexeme_data.line, lexeme_data.position, "Unexpected character");
             return false;
         }
     }
@@ -141,7 +141,7 @@ void MPROCESS::Tokenizer::tokenize()
             }
             if (tokenizer_is_at_end())
             {
-                Mont::instance().report(lexemes[lexeme_cursor].line, lexemes[lexeme_cursor].position, "Unterminated string");
+                Mont::instance().error(lexemes[lexeme_cursor].line, lexemes[lexeme_cursor].position, "Unterminated string");
             }
             else
             {
@@ -172,7 +172,7 @@ void MPROCESS::Tokenizer::tokenize()
             }
             else
             {
-                Mont::instance().report(lexeme_data.line, lexeme_data.position, "Unexpected character");
+                Mont::instance().error(lexeme_data.line, lexeme_data.position, "Unexpected character");
             }
         }
         this->lexeme_cursor++;
