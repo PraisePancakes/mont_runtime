@@ -25,7 +25,7 @@ void MPROCESS::Lexer::ship_lexeme(int line, int pos, std::string &buffer)
 {
     ILexeme item(line, pos, buffer);
     lexemes.push_back(item);
-    buffer = "";
+    buffer.clear();
 }
 
 void MPROCESS::Lexer::lex(const MFILESYSTEM::ByteArray &bytes_to_lex)
@@ -47,7 +47,9 @@ void MPROCESS::Lexer::lex(const MFILESYSTEM::ByteArray &bytes_to_lex)
             }
             position++;
             lexeme_buffer += consume();
+
             ship_lexeme(line, position, lexeme_buffer);
+            continue;
         }
 
         if (peek_byte() == '\"')
@@ -132,7 +134,7 @@ unsigned char MPROCESS::Lexer::peek_byte() const
 
 unsigned char MPROCESS::Lexer::consume()
 {
-    return bytes[current_byte_cursor++];
+    return current_byte_cursor >= this->bytes.size() ? '\0' : bytes[current_byte_cursor++];
 }
 
 MPROCESS::LexemeVector const &MPROCESS::Lexer::get_lexemes() const
