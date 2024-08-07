@@ -7,7 +7,7 @@ void Mont::run(MPROCESS::MFILESYSTEM::ByteArray bytes)
     tokenizer = new MPROCESS::Tokenizer(lexer->get_lexemes());
     parser = new MPROCESS::Parser(tokenizer->get_tokens());
     MPROCESS::IBaseExpr *expr = parser->parser_parse();
-    
+
     if (had_ct_error || had_rt_error)
     {
         return;
@@ -52,7 +52,6 @@ void Mont::run_file(const std::string &src)
 
 void Mont::view_token_content() const
 {
-    std::cout << tokenizer->get_tokens().size();
     for (auto &token : tokenizer->get_tokens())
     {
         std::cout << "[TOKEN] type : " << (int)token->type << " | value : " << token->lexeme_data.value << " | line : " << token->lexeme_data.line << " | position : " << token->lexeme_data.position << " | literal address : " << token->literal << std::endl;

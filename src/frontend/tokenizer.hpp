@@ -21,6 +21,9 @@ namespace MPROCESS
         [[nodiscard]] bool validate_identifier_token(const std::string &tok) const;
 
         bool tokenizer_is_at_end();
+        ILexeme &tokenizer_peek();
+        ILexeme &tokenizer_advance();
+        ILexeme &tokenizer_peek_next();
 
         void push_token(TOKEN_TYPE type, ILexeme lexeme_data, void *literal);
         void push_token(TOKEN_TYPE type, ILexeme lexeme_data);

@@ -17,6 +17,20 @@ bool MPROCESS::Tokenizer::validate_identifier_token(const std::string &tok) cons
     return true;
 }
 
+MPROCESS::ILexeme &MPROCESS::Tokenizer::tokenizer_peek()
+{
+    return this->lexemes[lexeme_cursor];
+};
+MPROCESS::ILexeme &MPROCESS::Tokenizer::tokenizer_peek_next()
+{
+    return this->lexemes[lexeme_cursor + 1];
+};
+MPROCESS::ILexeme &MPROCESS::Tokenizer::tokenizer_advance()
+{
+    lexeme_cursor++;
+    return this->lexemes[lexeme_cursor];
+};
+
 bool MPROCESS::Tokenizer::tokenizer_is_at_end()
 {
     return this->lexeme_cursor >= this->lexemes.size();
@@ -49,14 +63,15 @@ bool MPROCESS::Tokenizer::is_number(const ILexeme &lexeme_data)
 
     return true;
 }
+
 void MPROCESS::Tokenizer::tokenize()
 {
     while (!tokenizer_is_at_end())
     {
-        ILexeme lexeme_data = lexemes[this->lexeme_cursor];
+        ILexeme lexeme_data = tokenizer_peek();
         TOKEN_TYPE type = TOKEN_TYPE::TOK_ERROR;
 
-        std::string lexeme = lexeme_data.value;
+        std::string lexeme = tokenizer_peek().value;
 
         if (lexeme == "{")
         {
@@ -132,20 +147,19 @@ void MPROCESS::Tokenizer::tokenize()
         }
         else if (lexeme == "\"")
         {
-            lexeme_cursor++;
-            while (!tokenizer_is_at_end() && lexemes[lexeme_cursor].value != "\"")
+            tokenizer_advance();
+            while (!tokenizer_is_at_end() && tokenizer_peek().value != "\"")
             {
-                ILexeme string_lit(lexemes[lexeme_cursor]);
-                tokens.push_back(new IToken(TOKEN_TYPE::TOK_STRING_LIT, string_lit, nullptr));
-                lexeme_cursor++;
+                tokens.push_back(new IToken(TOKEN_TYPE::TOK_STRING_LIT, tokenizer_peek(), nullptr));
+                tokenizer_advance();
             }
             if (tokenizer_is_at_end())
             {
-                Mont::instance().error(lexemes[lexeme_cursor].line, lexemes[lexeme_cursor].position, "Unterminated string");
+                Mont::instance().error(tokenizer_peek().line, tokenizer_peek().position, "Unterminated string");
             }
             else
             {
-                lexeme_cursor++; // Skip closing quote
+                tokenizer_advance(); // Skip closing termination quote
             }
             continue;
         }
@@ -175,7 +189,7 @@ void MPROCESS::Tokenizer::tokenize()
                 Mont::instance().error(lexeme_data.line, lexeme_data.position, "Unexpected character");
             }
         }
-        this->lexeme_cursor++;
+        tokenizer_advance();
     }
 
     // Add EOF token at the end
