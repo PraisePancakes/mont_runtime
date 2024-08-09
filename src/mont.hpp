@@ -5,6 +5,7 @@
 #include "frontend/tokenizer.hpp"
 #include "frontend/parser.hpp"
 #include "frontend/interfaces/expression_base.hpp"
+#include "frontend/runtime_error.hpp"
 
 static bool had_ct_error = false;
 static bool had_rt_error = false;
@@ -42,7 +43,11 @@ public:
 
     void error(int line, int pos, const std::string &what) const;
     void error(const MPROCESS::IToken *token, const std::string &what) const;
-
+    void runtime_error(MontRunTimeError err)
+    {
+        std::cerr << "[ MontRuntime error ] : " << err.what() << " (line " << err.token->lexeme_data.line << " : " << err.token->lexeme_data.position << ")" << std::endl;
+        had_rt_error = true;
+    };
     void run_file(const std::string &src);
 
     void view_token_content() const;

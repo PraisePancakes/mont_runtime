@@ -2,6 +2,8 @@
 #include <iostream>
 #include "frontend/interfaces/visitor.hpp"
 #include "frontend/interfaces/expression.hpp"
+#include "frontend/runtime_error.hpp"
+#include "mont.hpp"
 
 // propogate error state up to Interpreter
 // Interpreter dispatches error state
@@ -54,6 +56,22 @@ namespace MPROCESS
             return equals(left, right);
         }
 
+        void check_unary_operand(MPROCESS::IToken *op, std::any operand)
+        {
+            if (operand.type() != typeid(double))
+            {
+                throw new MontRunTimeError(op, "Unary operand must be of integral type");
+            };
+        };
+
+        void check_binary_operands(MPROCESS::IToken *op, std::any left, std::any right)
+        {
+            if (left.type() != typeid(double) || right.type() != typeid(double))
+            {
+                throw new MontRunTimeError(op, "Binary operands must be of integral type");
+            }
+        };
+
     public:
         Interpreter();
 
@@ -65,33 +83,31 @@ namespace MPROCESS
             switch (expr->op_tok->type)
             {
             case TOKEN_TYPE::TOK_ADD:
-                if (left.type() == typeid(double) && right.type() == typeid(double))
-                    return std::any_cast<double>(left) + std::any_cast<double>(right);
+                check_binary_operands(expr->op_tok, left, right);
+                return std::any_cast<double>(left) + std::any_cast<double>(right);
                 if (left.type() == typeid(std::string) && right.type() == typeid(std::string))
-                    return std::any_cast<double>(left) + std::any_cast<double>(right);
+                    return std::any_cast<std::string>(left) + std::any_cast<std::string>(right);
             case TOKEN_TYPE::TOK_SUB:
-                if (left.type() == typeid(double) && right.type() == typeid(double))
-                    return std::any_cast<double>(left) - std::any_cast<double>(right);
-
+                check_binary_operands(expr->op_tok, left, right);
+                return std::any_cast<double>(left) - std::any_cast<double>(right);
             case TOKEN_TYPE::TOK_MULT:
-                if (left.type() == typeid(double) && right.type() == typeid(double))
-                    return std::any_cast<double>(left) * std::any_cast<double>(right);
-
+                check_binary_operands(expr->op_tok, left, right);
+                return std::any_cast<double>(left) * std::any_cast<double>(right);
             case TOKEN_TYPE::TOK_DIV:
-                if (left.type() == typeid(double) && right.type() == typeid(double))
-                    return std::any_cast<double>(left) / std::any_cast<double>(right);
+                check_binary_operands(expr->op_tok, left, right);
+                return std::any_cast<double>(left) / std::any_cast<double>(right);
             case TOKEN_TYPE::TOK_GREATER:
-                if (left.type() == typeid(double) && right.type() == typeid(double))
-                    return std::any_cast<double>(left) > std::any_cast<double>(right);
+                check_binary_operands(expr->op_tok, left, right);
+                return std::any_cast<double>(left) > std::any_cast<double>(right);
             case TOKEN_TYPE::TOK_LESS:
-                if (left.type() == typeid(double) && right.type() == typeid(double))
-                    return std::any_cast<double>(left) < std::any_cast<double>(right);
+                check_binary_operands(expr->op_tok, left, right);
+                return std::any_cast<double>(left) < std::any_cast<double>(right);
             case TOKEN_TYPE::TOK_GREATER_EQUALS:
-                if (left.type() == typeid(double) && right.type() == typeid(double))
-                    return std::any_cast<double>(left) >= std::any_cast<double>(right);
+                check_binary_operands(expr->op_tok, left, right);
+                return std::any_cast<double>(left) >= std::any_cast<double>(right);
             case TOKEN_TYPE::TOK_LESS_EQUALS:
-                if (left.type() == typeid(double) && right.type() == typeid(double))
-                    return std::any_cast<double>(left) <= std::any_cast<double>(right);
+                check_binary_operands(expr->op_tok, left, right);
+                return std::any_cast<double>(left) <= std::any_cast<double>(right);
             case TOKEN_TYPE::TOK_BANG_EQUALS:
                 return !is_equality(left, right);
             case TOKEN_TYPE::TOK_EQUAL_EQUALS:
@@ -100,6 +116,28 @@ namespace MPROCESS
 
             // unreachable
             return nullptr;
+        };
+        void interpret(IBaseExpr *expr)
+        {
+            try
+            {
+                std::any value = evaluate(expr);
+                if (value.has_value())
+                {
+                    if (value.type() == typeid(std::string))
+                    {
+                        std::cout << std::any_cast<std::string>(value) << std::endl;
+                    }
+                    else if (value.type() == typeid(double))
+                    {
+                        std::cout << std::any_cast<double>(value);
+                    }
+                }
+            }
+            catch (MontRunTimeError error)
+            {
+                Mont::instance().runtime_error(error);
+            }
         };
         std::any visitGrouping(Grouping *expr) override { return evaluate(expr->expr); };
         std::any visitLiteral(Literal *expr) override { return expr->value; };
@@ -110,6 +148,7 @@ namespace MPROCESS
             switch (expr->op->type)
             {
             case TOKEN_TYPE::TOK_SUB:
+                check_unary_operand(expr->op, expr->right);
                 return new double(std::any_cast<double>(right));
             case TOKEN_TYPE::TOK_BANG:
                 return !is_truthy(right);
