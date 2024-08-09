@@ -2,6 +2,7 @@
 #include <iostream>
 #include "lexeme.hpp"
 #include <map>
+#include <any>
 
 namespace MPROCESS
 {
@@ -59,9 +60,9 @@ namespace MPROCESS
     public:
         TOKEN_TYPE type;
         ILexeme lexeme_data;
-        void *literal;
+        std::any literal;
 
-        IToken(TOKEN_TYPE type, ILexeme lexeme, void *literal_value)
+        IToken(TOKEN_TYPE type, ILexeme lexeme, std::any literal_value)
         {
             this->type = type;
             this->lexeme_data = lexeme;

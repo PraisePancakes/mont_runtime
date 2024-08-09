@@ -1,5 +1,7 @@
 #include "tokenizer.hpp"
 #include "../mont.hpp"
+#include <any>
+
 bool MPROCESS::Tokenizer::validate_identifier_token(const std::string &tok) const
 {
     if (tok.empty())
@@ -36,7 +38,7 @@ bool MPROCESS::Tokenizer::tokenizer_is_at_end()
     return this->lexeme_cursor >= this->lexemes.size();
 };
 
-void MPROCESS::Tokenizer::push_token(TOKEN_TYPE type, ILexeme lexeme_data, void *literal)
+void MPROCESS::Tokenizer::push_token(TOKEN_TYPE type, ILexeme lexeme_data, std::any literal)
 {
     tokens.push_back(new IToken(type, lexeme_data, literal));
 }
@@ -150,7 +152,7 @@ void MPROCESS::Tokenizer::tokenize()
             tokenizer_advance();
             while (!tokenizer_is_at_end() && tokenizer_peek().value != "\"")
             {
-                tokens.push_back(new IToken(TOKEN_TYPE::TOK_STRING_LIT, tokenizer_peek(), nullptr));
+                tokens.push_back(new IToken(TOKEN_TYPE::TOK_STRING_LIT, tokenizer_peek(), tokenizer_peek().value));
                 tokenizer_advance();
             }
             if (tokenizer_is_at_end())
@@ -166,7 +168,7 @@ void MPROCESS::Tokenizer::tokenize()
         else if (is_number(lexeme_data))
         {
             double number = std::stod(lexeme_data.value);
-            push_token(TOKEN_TYPE::TOK_INT_LIT, lexeme_data, &number);
+            push_token(TOKEN_TYPE::TOK_INT_LIT, lexeme_data, number);
         }
         else
         {

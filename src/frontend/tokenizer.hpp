@@ -2,6 +2,7 @@
 #include "lexer.hpp"
 #include "interfaces/token.hpp"
 #include <string>
+#include <any>
 
 namespace MPROCESS
 {
@@ -25,7 +26,7 @@ namespace MPROCESS
         ILexeme &tokenizer_advance();
         ILexeme &tokenizer_peek_next();
 
-        void push_token(TOKEN_TYPE type, ILexeme lexeme_data, void *literal);
+        void push_token(TOKEN_TYPE type, ILexeme lexeme_data, std::any literal);
         void push_token(TOKEN_TYPE type, ILexeme lexeme_data);
         bool is_digit(const char c);
 

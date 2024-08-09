@@ -1,5 +1,6 @@
 #include "parser.hpp"
 #include "../mont.hpp"
+#include <any>
 
 MPROCESS::IToken *MPROCESS::Parser::parser_consume(TOKEN_TYPE type, std::string exception)
 {
@@ -45,14 +46,12 @@ MPROCESS::IBaseExpr *MPROCESS::Parser::primary()
 {
     if (match_token_to_current({TOKEN_TYPE::TOK_FALSE}))
     {
-        bool *false_val = new bool(false);
-        return new Literal(false_val);
+        return new Literal(false);
     }
 
     if (match_token_to_current({TOKEN_TYPE::TOK_TRUE}))
     {
-        bool *true_val = new bool(true);
-        return new Literal(true_val);
+        return new Literal(true);
     }
 
     if (match_token_to_current({TOKEN_TYPE::TOK_NULL}))

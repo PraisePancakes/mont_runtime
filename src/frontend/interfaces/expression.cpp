@@ -33,7 +33,7 @@ MPROCESS::Grouping::Grouping(IBaseExpr *group_expr)
 
 MPROCESS::Grouping::~Grouping() {};
 
-MPROCESS::Literal::Literal(void *literal_val)
+MPROCESS::Literal::Literal(std::any literal_val)
 {
     this->value = literal_val;
 };

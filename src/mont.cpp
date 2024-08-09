@@ -52,11 +52,46 @@ void Mont::run_file(const std::string &src)
 
 void Mont::view_token_content() const
 {
-    for (auto &token : tokenizer->get_tokens())
+    for (const auto &token : tokenizer->get_tokens())
     {
-        std::cout << "[TOKEN] type : " << (int)token->type << " | value : " << token->lexeme_data.value << " | line : " << token->lexeme_data.line << " | position : " << token->lexeme_data.position << " | literal address : " << token->literal << std::endl;
+        std::cout << "[TOKEN] type : " << static_cast<int>(token->type)
+                  << " | value : " << token->lexeme_data.value
+                  << " | line : " << token->lexeme_data.line
+                  << " | position : " << token->lexeme_data.position
+                  << " | literal : ";
+
+        // Check and print the type of token->literal
+        if (token->literal.has_value())
+        {
+            if (token->literal.type() == typeid(bool))
+            {
+                std::cout << std::any_cast<bool>(token->literal);
+            }
+            else if (token->literal.type() == typeid(char))
+            {
+                std::cout << std::any_cast<char>(token->literal);
+            }
+            else if (token->literal.type() == typeid(std::string))
+            {
+                std::cout << std::any_cast<std::string>(token->literal);
+            }
+            else if (token->literal.type() == typeid(double))
+            {
+                std::cout << std::any_cast<double>(token->literal);
+            }
+            else
+            {
+                std::cout << "<unknown type>";
+            }
+        }
+        else
+        {
+            std::cout << "<no value>";
+        }
+
+        std::cout << std::endl;
     }
-};
+}
 
 void Mont::view_lexeme_content() const
 {

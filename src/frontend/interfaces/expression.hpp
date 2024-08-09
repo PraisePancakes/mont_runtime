@@ -18,10 +18,9 @@ namespace MPROCESS
 
         Binary();
 
-        template <class T>
-        T accept(IExprVisitor<T> &vis)
+        std::any accept(IExprVisitor *vis) override
         {
-            return vis.visitBinary(*this);
+            return vis->visitBinary(this);
         };
 
         ~Binary();
@@ -29,16 +28,15 @@ namespace MPROCESS
 
     class Unary final : public IBaseExpr
     {
-        IBaseExpr *right;
-        IToken *op;
 
     public:
+        IBaseExpr *right;
+        IToken *op;
         Unary(IToken *op, IBaseExpr *right);
 
-        template <class T>
-        T accept(IExprVisitor<T> &vis)
+        std::any accept(IExprVisitor *vis) override
         {
-            return vis.visitUnary(*this);
+            return vis->visitUnary(this);
         };
 
         ~Unary();
@@ -51,27 +49,25 @@ namespace MPROCESS
         IBaseExpr *expr;
         Grouping(IBaseExpr *group_expr);
 
-        template <class T>
-        T accept(IExprVisitor<T> &vis)
+        std::any accept(IExprVisitor *vis) override
         {
-            return vis.visitGrouping(*this);
+            return vis->visitGrouping(this);
         };
 
         ~Grouping();
     };
 
-      class Literal final : public IBaseExpr
+    class Literal final : public IBaseExpr
     {
     public:
-        void *value;
-        Literal(void *literal_val);
+        std::any value;
+        Literal(std::any literal_val);
 
         Literal();
 
-        template <class T>
-        T accept(IExprVisitor<T> &vis)
+        std::any accept(IExprVisitor *vis) override
         {
-            return vis.visitLiteral(*this);
+            return vis->visitLiteral(this);
         };
 
         ~Literal();

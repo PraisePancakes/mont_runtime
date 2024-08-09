@@ -1,5 +1,6 @@
 #pragma once
 #include <variant>
+#include <any>
 
 namespace MPROCESS
 {
@@ -9,15 +10,14 @@ namespace MPROCESS
     class Literal;
     class Grouping;
 
-    template <typename T>
     class IExprVisitor
     {
 
     public:
-        virtual T visitBinary(Binary &expr) = 0;
-        virtual T visitUnary(Unary &expr) = 0;
-        virtual T visitLiteral(Literal &expr) = 0;
-        virtual T visitGrouping(Grouping &expr) = 0;
+        virtual std::any visitBinary(Binary *expr) = 0;
+        virtual std::any visitUnary(Unary *expr) = 0;
+        virtual std::any visitLiteral(Literal *expr) = 0;
+        virtual std::any visitGrouping(Grouping *expr) = 0;
 
         virtual ~IExprVisitor() = default;
     };
