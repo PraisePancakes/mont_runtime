@@ -17,6 +17,24 @@ namespace MPROCESS
             return expr->accept(this);
         };
 
+        bool equals(std::any left, std::any right)
+        {
+            if (left.type() == typeid(std::string) && right.type() == typeid(std::string))
+            {
+                return std::any_cast<std::string>(left) == std::any_cast<std::string>(right);
+            }
+            else if (left.type() == typeid(double) && right.type() == typeid(double))
+            {
+                return std::any_cast<double>(left) == std::any_cast<double>(right);
+            }
+            else if (left.type() == typeid(bool) && right.type() == typeid(bool))
+            {
+                return std::any_cast<bool>(left) == std::any_cast<bool>(right);
+            }
+
+            return false;
+        }
+
         bool is_truthy(std::any obj)
         {
             if (!obj.has_value())
@@ -25,6 +43,16 @@ namespace MPROCESS
                 return std::any_cast<bool>(obj);
             return true;
         };
+
+        bool is_equality(std::any left, std::any right)
+        {
+            if (!left.has_value() && !right.has_value())
+                return true;
+            if (!left.has_value())
+                return false;
+
+            return equals(left, right);
+        }
 
     public:
         Interpreter();
@@ -37,17 +65,40 @@ namespace MPROCESS
             switch (expr->op_tok->type)
             {
             case TOKEN_TYPE::TOK_ADD:
-                if (std::any_cast<double>(left) && std::any_cast<double>(right))
+                if (left.type() == typeid(double) && right.type() == typeid(double))
+                    return std::any_cast<double>(left) + std::any_cast<double>(right);
+                if (left.type() == typeid(std::string) && right.type() == typeid(std::string))
                     return std::any_cast<double>(left) + std::any_cast<double>(right);
             case TOKEN_TYPE::TOK_SUB:
-                if (std::any_cast<double>(left) && std::any_cast<double>(right))
+                if (left.type() == typeid(double) && right.type() == typeid(double))
                     return std::any_cast<double>(left) - std::any_cast<double>(right);
-                break;
+
             case TOKEN_TYPE::TOK_MULT:
-                break;
+                if (left.type() == typeid(double) && right.type() == typeid(double))
+                    return std::any_cast<double>(left) * std::any_cast<double>(right);
+
             case TOKEN_TYPE::TOK_DIV:
-                break;
+                if (left.type() == typeid(double) && right.type() == typeid(double))
+                    return std::any_cast<double>(left) / std::any_cast<double>(right);
+            case TOKEN_TYPE::TOK_GREATER:
+                if (left.type() == typeid(double) && right.type() == typeid(double))
+                    return std::any_cast<double>(left) > std::any_cast<double>(right);
+            case TOKEN_TYPE::TOK_LESS:
+                if (left.type() == typeid(double) && right.type() == typeid(double))
+                    return std::any_cast<double>(left) < std::any_cast<double>(right);
+            case TOKEN_TYPE::TOK_GREATER_EQUALS:
+                if (left.type() == typeid(double) && right.type() == typeid(double))
+                    return std::any_cast<double>(left) >= std::any_cast<double>(right);
+            case TOKEN_TYPE::TOK_LESS_EQUALS:
+                if (left.type() == typeid(double) && right.type() == typeid(double))
+                    return std::any_cast<double>(left) <= std::any_cast<double>(right);
+            case TOKEN_TYPE::TOK_BANG_EQUALS:
+                return !is_equality(left, right);
+            case TOKEN_TYPE::TOK_EQUAL_EQUALS:
+                return is_equality(left, right);
             }
+
+            // unreachable
             return nullptr;
         };
         std::any visitGrouping(Grouping *expr) override { return evaluate(expr->expr); };
