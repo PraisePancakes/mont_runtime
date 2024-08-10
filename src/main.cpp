@@ -17,9 +17,11 @@ int main(int argc, char **argv)
     else if (argc == 2)
     {
         Mont::instance().run_file(argv[1]);
+       
     }
     else if (argc == 0)
     {
+
         Mont::instance().run_repl();
     }
 

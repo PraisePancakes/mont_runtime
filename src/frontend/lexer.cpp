@@ -73,6 +73,17 @@ void MPROCESS::Lexer::lex(const MFILESYSTEM::ByteArray &bytes_to_lex)
             ship_lexeme(line, position, lexeme_buffer);
         }
 
+        if (peek_byte() == '/' && (peek_byte(1) != '/' && peek_byte(1) != '*'))
+        {
+            if (!lexeme_buffer.empty())
+            {
+                ship_lexeme(line, position, lexeme_buffer);
+            }
+
+            lexeme_buffer += consume();
+            ship_lexeme(line, position, lexeme_buffer);
+        }
+
         if (peek_byte() == '/' && peek_byte(1) == '/')
         {
             while (peek_byte() != '\n')

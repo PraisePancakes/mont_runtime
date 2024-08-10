@@ -7,7 +7,8 @@ void Mont::run(MPROCESS::MFILESYSTEM::ByteArray bytes)
     tokenizer = new MPROCESS::Tokenizer(lexer->get_lexemes());
     parser = new MPROCESS::Parser(tokenizer->get_tokens());
     MPROCESS::IBaseExpr *expr = parser->parser_parse();
-
+    view_token_content();
+    view_lexeme_content();
     if (had_ct_error || had_rt_error)
     {
         return;
