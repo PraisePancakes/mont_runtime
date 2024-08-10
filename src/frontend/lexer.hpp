@@ -33,7 +33,7 @@ namespace MPROCESS
         [[nodiscard]] bool is_delimeter(unsigned char byte) const;
 
         void ship_lexeme(int line, int pos, std::string &buffer);
-
+        void ship_operators(int line, int pos, std::string &buf);
         void lex(const MFILESYSTEM::ByteArray &bytes_to_lex);
 
     public:

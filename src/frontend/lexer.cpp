@@ -28,6 +28,18 @@ void MPROCESS::Lexer::ship_lexeme(int line, int pos, std::string &buffer)
     buffer.clear();
 }
 
+void MPROCESS::Lexer::ship_operators(int line, int pos, std::string &buf)
+{
+    if (!buf.empty())
+    {
+        ship_lexeme(line, pos, buf);
+    }
+
+    buf += consume();
+    // lexeme_buffer += consume(); in the case we ever want assignment operators
+    ship_lexeme(line, pos, buf);
+};
+
 void MPROCESS::Lexer::lex(const MFILESYSTEM::ByteArray &bytes_to_lex)
 {
     // bytes_to_lex = ['t', 'h', 'i', 's', ' ', 'i' , 's', ' ' , 'a', 't', 'e', 's', 't'];
@@ -82,6 +94,11 @@ void MPROCESS::Lexer::lex(const MFILESYSTEM::ByteArray &bytes_to_lex)
 
             lexeme_buffer += consume();
             ship_lexeme(line, position, lexeme_buffer);
+        }
+
+        if (peek_byte() == '*' || peek_byte() == '+' || peek_byte() == '-' || peek_byte() == '/')
+        {
+            ship_operators(line, position, lexeme_buffer);
         }
 
         if (peek_byte() == '/' && peek_byte(1) == '/')
