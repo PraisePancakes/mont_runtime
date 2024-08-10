@@ -6,6 +6,7 @@
 #include "frontend/parser.hpp"
 #include "frontend/interfaces/expression_base.hpp"
 #include "frontend/runtime_error.hpp"
+#include "interpreter.hpp"
 
 static bool had_ct_error = false;
 static bool had_rt_error = false;
@@ -17,6 +18,7 @@ class Mont
     MPROCESS::Lexer *lexer;
     MPROCESS::Tokenizer *tokenizer;
     MPROCESS::Parser *parser;
+    MPROCESS::Interpreter *interp;
 
     void run(MPROCESS::MFILESYSTEM::ByteArray bytes);
     void report(int line, int pos, const std::string &what) const;

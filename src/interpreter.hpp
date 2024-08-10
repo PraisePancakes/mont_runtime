@@ -3,7 +3,6 @@
 #include "frontend/interfaces/visitor.hpp"
 #include "frontend/interfaces/expression.hpp"
 #include "frontend/runtime_error.hpp"
-#include "mont.hpp"
 
 // propogate error state up to Interpreter
 // Interpreter dispatches error state
@@ -14,149 +13,29 @@ namespace MPROCESS
     class Interpreter : public IExprVisitor
     {
 
-        std::any evaluate(IBaseExpr *expr)
-        {
-            return expr->accept(this);
-        };
+        std::any evaluate(IBaseExpr *expr);
 
-        bool equals(std::any left, std::any right)
-        {
-            if (left.type() == typeid(std::string) && right.type() == typeid(std::string))
-            {
-                return std::any_cast<std::string>(left) == std::any_cast<std::string>(right);
-            }
-            else if (left.type() == typeid(double) && right.type() == typeid(double))
-            {
-                return std::any_cast<double>(left) == std::any_cast<double>(right);
-            }
-            else if (left.type() == typeid(bool) && right.type() == typeid(bool))
-            {
-                return std::any_cast<bool>(left) == std::any_cast<bool>(right);
-            }
+        bool equals(std::any left, std::any right);
 
-            return false;
-        }
+        bool is_truthy(std::any obj);
 
-        bool is_truthy(std::any obj)
-        {
-            if (!obj.has_value())
-                return false;
-            if (obj.type() == typeid(bool))
-                return std::any_cast<bool>(obj);
-            return true;
-        };
+        bool is_equality(std::any left, std::any right);
 
-        bool is_equality(std::any left, std::any right)
-        {
-            if (!left.has_value() && !right.has_value())
-                return true;
-            if (!left.has_value())
-                return false;
+        void check_unary_operand(MPROCESS::IToken *op, std::any operand);
 
-            return equals(left, right);
-        }
-
-        void check_unary_operand(MPROCESS::IToken *op, std::any operand)
-        {
-            if (operand.type() != typeid(double))
-            {
-                throw new MontRunTimeError(op, "Unary operand must be of integral type");
-            };
-        };
-
-        void check_binary_operands(MPROCESS::IToken *op, std::any left, std::any right)
-        {
-            if (left.type() != typeid(double) || right.type() != typeid(double))
-            {
-                throw new MontRunTimeError(op, "Binary operands must be of integral type");
-            }
-        };
+        void check_binary_operands(MPROCESS::IToken *op, std::any left, std::any right);
 
     public:
-        Interpreter();
+        Interpreter() {};
 
-        std::any visitBinary(Binary *expr) override
-        {
-            std::any left = evaluate(expr->left_op);
-            std::any right = evaluate(expr->right_op);
+        std::any visitBinary(Binary *expr) override;
 
-            switch (expr->op_tok->type)
-            {
-            case TOKEN_TYPE::TOK_ADD:
-                check_binary_operands(expr->op_tok, left, right);
-                return std::any_cast<double>(left) + std::any_cast<double>(right);
-                if (left.type() == typeid(std::string) && right.type() == typeid(std::string))
-                    return std::any_cast<std::string>(left) + std::any_cast<std::string>(right);
-            case TOKEN_TYPE::TOK_SUB:
-                check_binary_operands(expr->op_tok, left, right);
-                return std::any_cast<double>(left) - std::any_cast<double>(right);
-            case TOKEN_TYPE::TOK_MULT:
-                check_binary_operands(expr->op_tok, left, right);
-                return std::any_cast<double>(left) * std::any_cast<double>(right);
-            case TOKEN_TYPE::TOK_DIV:
-                check_binary_operands(expr->op_tok, left, right);
-                return std::any_cast<double>(left) / std::any_cast<double>(right);
-            case TOKEN_TYPE::TOK_GREATER:
-                check_binary_operands(expr->op_tok, left, right);
-                return std::any_cast<double>(left) > std::any_cast<double>(right);
-            case TOKEN_TYPE::TOK_LESS:
-                check_binary_operands(expr->op_tok, left, right);
-                return std::any_cast<double>(left) < std::any_cast<double>(right);
-            case TOKEN_TYPE::TOK_GREATER_EQUALS:
-                check_binary_operands(expr->op_tok, left, right);
-                return std::any_cast<double>(left) >= std::any_cast<double>(right);
-            case TOKEN_TYPE::TOK_LESS_EQUALS:
-                check_binary_operands(expr->op_tok, left, right);
-                return std::any_cast<double>(left) <= std::any_cast<double>(right);
-            case TOKEN_TYPE::TOK_BANG_EQUALS:
-                return !is_equality(left, right);
-            case TOKEN_TYPE::TOK_EQUAL_EQUALS:
-                return is_equality(left, right);
-            }
+        void interpret(IBaseExpr *expr);
 
-            // unreachable
-            return nullptr;
-        };
-        void interpret(IBaseExpr *expr)
-        {
-            try
-            {
-                std::any value = evaluate(expr);
-                if (value.has_value())
-                {
-                    if (value.type() == typeid(std::string))
-                    {
-                        std::cout << std::any_cast<std::string>(value) << std::endl;
-                    }
-                    else if (value.type() == typeid(double))
-                    {
-                        std::cout << std::any_cast<double>(value);
-                    }
-                }
-            }
-            catch (MontRunTimeError error)
-            {
-                Mont::instance().runtime_error(error);
-            }
-        };
-        std::any visitGrouping(Grouping *expr) override { return evaluate(expr->expr); };
-        std::any visitLiteral(Literal *expr) override { return expr->value; };
-        std::any visitUnary(Unary *expr) override
-        {
-            std::any right = evaluate(expr->right);
+        std::any visitGrouping(Grouping *expr) override;
+        std::any visitLiteral(Literal *expr) override;
+        std::any visitUnary(Unary *expr) override;
 
-            switch (expr->op->type)
-            {
-            case TOKEN_TYPE::TOK_SUB:
-                check_unary_operand(expr->op, expr->right);
-                return new double(std::any_cast<double>(right));
-            case TOKEN_TYPE::TOK_BANG:
-                return !is_truthy(right);
-            }
-
-            return nullptr;
-        };
-
-        ~Interpreter() {};
+        ~Interpreter();
     };
 };

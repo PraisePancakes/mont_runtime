@@ -13,7 +13,8 @@ void Mont::run(MPROCESS::MFILESYSTEM::ByteArray bytes)
         return;
     }
 
-    // MPROCESS::Interpreter* interp = new MPROCESS::Interpreter(statements);
+    interp = new MPROCESS::Interpreter();
+    interp->interpret(expr);
 };
 
 void Mont::error(const MPROCESS::IToken *token, const std::string &what) const

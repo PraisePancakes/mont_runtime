@@ -17,8 +17,6 @@ int main(int argc, char **argv)
     else if (argc == 2)
     {
         Mont::instance().run_file(argv[1]);
-
-        Mont::instance().view_token_content();
     }
     else if (argc == 0)
     {
