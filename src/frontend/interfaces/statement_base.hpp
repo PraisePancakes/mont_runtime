@@ -1,4 +1,6 @@
 #pragma once
+#include <any>
+#include "visitor.hpp"
 
 namespace MPROCESS
 {
@@ -6,6 +8,7 @@ namespace MPROCESS
     {
     public:
         IBaseStmt() {};
+        virtual std::any accept(IStmtVisitor *vis) = 0;
         ~IBaseStmt() {};
     };
 

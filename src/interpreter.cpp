@@ -49,6 +49,7 @@ void MPROCESS::Interpreter::check_unary_operand(MPROCESS::IToken *op, std::any o
 {
     if (operand.type() != typeid(double))
     {
+        std::cout << "here";
         throw new MontRunTimeError(op, "Unary operand must be of integral type");
     };
 };
@@ -77,8 +78,20 @@ std::any MPROCESS::Interpreter::visitBinary(Binary *expr)
         {
             return std::any_cast<std::string>(left) + std::any_cast<std::string>(right);
         }
+        else if ((left.type() == typeid(std::string) && right.type() == typeid(double)))
+        {
+            std::string right_string = std::to_string(std::any_cast<double>(right));
+            return std::any_cast<std::string>(left) + right_string;
+        }
+        else if ((right.type() == typeid(std::string) && left.type() == typeid(double)))
+        {
 
-        throw new MontRunTimeError(expr->op_tok, "Operands must be of string or integral type");
+            std::string left_string = std::to_string(std::any_cast<double>(left));
+
+            return std::any_cast<std::string>(right) + left_string;
+        }
+
+        throw MontRunTimeError(expr->op_tok, "Operands must be of string or integral type");
 
     case TOKEN_TYPE::TOK_SUB:
         check_binary_operands(expr->op_tok, left, right);
@@ -87,8 +100,16 @@ std::any MPROCESS::Interpreter::visitBinary(Binary *expr)
         check_binary_operands(expr->op_tok, left, right);
         return std::any_cast<double>(left) * std::any_cast<double>(right);
     case TOKEN_TYPE::TOK_DIV:
+    {
         check_binary_operands(expr->op_tok, left, right);
+        double denom = std::any_cast<double>(right);
+        if (denom == 0.f)
+        {
+            throw MontRunTimeError(expr->op_tok, "Undefined rational expression");
+        }
         return std::any_cast<double>(left) / std::any_cast<double>(right);
+    }
+
     case TOKEN_TYPE::TOK_GREATER:
         check_binary_operands(expr->op_tok, left, right);
         return std::any_cast<double>(left) > std::any_cast<double>(right);

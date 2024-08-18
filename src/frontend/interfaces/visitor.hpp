@@ -9,6 +9,12 @@ namespace MPROCESS
     class Unary;
     class Literal;
     class Grouping;
+    class Block;
+    class Expression;
+    class Var;
+    class If;
+    class While;
+    class Print;
 
     class IExprVisitor
     {
@@ -22,16 +28,17 @@ namespace MPROCESS
         virtual ~IExprVisitor() = default;
     };
 
-    template <typename T>
     class IStmtVisitor
     {
     public:
-        virtual T visitBlock() = 0;
-        virtual T visitExpression() = 0;
-        virtual T visitPrint() = 0;
-        virtual T visitVar() = 0;
-        virtual T visitIf() = 0;
-        virtual T visitWhile() = 0;
+        virtual std::any visitBlock(Block *stmt) = 0;
+        virtual std::any visitExpression(Expression *stmt) = 0;
+        virtual std::any visitPrint(Print *stmt) = 0;
+        virtual std::any visitVar(Var *stmt) = 0;
+        virtual std::any visitIf(If *stmt) = 0;
+        virtual std::any visitWhile(While *stmt) = 0;
+
+        virtual ~IStmtVisitor() = default;
     };
 
 }

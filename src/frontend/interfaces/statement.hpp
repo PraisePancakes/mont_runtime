@@ -22,10 +22,9 @@ namespace MPROCESS
             return this->statements;
         }
 
-        template <class T>
-        T accept(IStmtVisitor<T> &vis)
+        std::any accept(IStmtVisitor *vis) override
         {
-            return vis.visitBlock(*this);
+            return vis->visitBlock(this);
         };
     };
 
@@ -44,10 +43,9 @@ namespace MPROCESS
             return expr;
         }
 
-        template <class T>
-        T accept(IStmtVisitor<T> &vis)
+        std::any accept(IStmtVisitor *vis) override
         {
-            return vis.visitExpression(*this);
+            return vis->visitExpression(this);
         };
     };
 
@@ -61,10 +59,9 @@ namespace MPROCESS
             this->expr = expr;
         };
 
-        template <class T>
-        T accept(IStmtVisitor<T> &vis)
+        std::any accept(IStmtVisitor *vis) override
         {
-            return vis.visitPrint(*this);
+            return vis->visitPrint(this);
         };
 
         ~Print() {};
@@ -91,6 +88,11 @@ namespace MPROCESS
         {
             return this->initializer;
         };
+
+        std::any accept(IStmtVisitor *vis) override
+        {
+            return vis->visitVar(this);
+        };
     };
 
     class If : public IBaseStmt
@@ -106,5 +108,25 @@ namespace MPROCESS
             this->else_branch = else_branch;
             this->then_branch = then_branch;
         };
+
+        std::any accept(IStmtVisitor *vis) override
+        {
+            return vis->visitIf(this);
+        };
+    };
+
+    class While : public IBaseStmt
+    {
+        IBaseExpr *condition;
+        IBaseStmt *body;
+
+    public:
+        While(IBaseExpr *c, IBaseStmt *b) : condition(c), body(b) {};
+
+        std::any accept(IStmtVisitor *vis) override
+        {
+            return vis->visitWhile(this);
+        };
+        ~While() {};
     };
 };
