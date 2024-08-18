@@ -44,7 +44,6 @@ namespace MPROCESS
 
         void add_tok(TOKEN_TYPE t)
         {
-
             add_tok(t, nullptr);
         };
         void scan_number();

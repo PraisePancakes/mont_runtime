@@ -23,6 +23,7 @@ void MPROCESS::Tokenizer::scan_string()
 {
 
     std::cout << "starting here : " << tokenizer_peek() << std::endl;
+    std::string literal = "";
     while (tokenizer_peek() != '"' && !tokenizer_is_at_end())
     {
 
@@ -30,9 +31,9 @@ void MPROCESS::Tokenizer::scan_string()
         {
             line++;
         }
-        tokenizer_advance();
+        literal += tokenizer_advance();
     }
-    std::cout << "ending here : " << tokenizer_peek() << std::endl;
+
     if (tokenizer_is_at_end())
     {
         Mont::instance().error(line, "Unterminated string.");
@@ -40,9 +41,7 @@ void MPROCESS::Tokenizer::scan_string()
 
     tokenizer_advance();
 
-    std::string value = src.substr(start + 1, current - start - 1);
-
-    add_tok(TOKEN_TYPE::TOK_STRING_LIT, value);
+    add_tok(TOKEN_TYPE::TOK_STRING_LIT, literal);
 };
 
 char MPROCESS::Tokenizer::tokenizer_peek()
@@ -121,7 +120,7 @@ void MPROCESS::Tokenizer::scan_token()
     case '/':
         if (match('/'))
         {
-            // A comment goes until the end of the line.
+
             while (tokenizer_peek() != '\n' && !tokenizer_is_at_end())
             {
                 // Consume newline
