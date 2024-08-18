@@ -9,11 +9,12 @@ add_executable(
     src/main.cpp 
     src/frontend/tokenizer.cpp 
     src/frontend/parser.cpp 
-    src/frontend/lexer.cpp 
     src/frontend/file_info.cpp 
     src/frontend/interfaces/expression.cpp 
-    src/frontend/interfaces/lexeme.hpp
-    src/frontend/interfaces/token.hpp
+    src/frontend/interfaces/token.cpp
+    src/frontend/interfaces/expression_base.cpp
+    src/frontend/interfaces/statement_base.cpp
+    src/frontend/interfaces/statement.cpp
     src/interpreter.cpp
     src/mont.cpp
     src/frontend/parser_error.hpp

@@ -38,7 +38,7 @@ void MPROCESS::Parser::parser_synchronize()
 
 MPROCESS::ParserError *MPROCESS::Parser::error(IToken *token, const std::string &message)
 {
-    Mont::instance().error(token, message);
+    Mont::instance().error(*token, message);
     return new ParserError();
 };
 

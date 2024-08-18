@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include "lexeme.hpp"
+
 #include <map>
 #include <any>
 
@@ -59,18 +59,12 @@ namespace MPROCESS
     {
     public:
         TOKEN_TYPE type;
-        ILexeme lexeme_data;
+        std::string lexeme;
+        int line;
         std::any literal;
 
-        IToken(TOKEN_TYPE type, ILexeme lexeme, std::any literal_value)
-        {
-            this->type = type;
-            this->lexeme_data = lexeme;
-            this->literal = literal_value;
-        }
+        IToken(TOKEN_TYPE type, const std::string &lexeme, std::any literal_value, int line);
 
-        ~IToken() {
-
-        };
+        ~IToken();
     };
 }

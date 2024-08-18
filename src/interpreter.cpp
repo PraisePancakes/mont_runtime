@@ -8,6 +8,21 @@ std::any MPROCESS::Interpreter::evaluate(IBaseExpr *expr)
     return expr->accept(this);
 };
 
+void MPROCESS::Interpreter::interpret(std::vector<MPROCESS::IBaseStmt *> statements)
+{
+    try
+    {
+        for (auto &s : statements)
+        {
+            execute(s);
+        }
+    }
+    catch (MontRunTimeError e)
+    {
+        Mont::instance().runtime_error(e);
+    };
+};
+
 bool MPROCESS::Interpreter::equals(std::any left, std::any right)
 {
     if (left.type() == typeid(std::string) && right.type() == typeid(std::string))
@@ -132,28 +147,34 @@ std::any MPROCESS::Interpreter::visitBinary(Binary *expr)
     return nullptr;
 };
 
-void MPROCESS::Interpreter::interpret(IBaseExpr *expr)
+void MPROCESS::Interpreter::execute(MPROCESS::IBaseStmt *s)
 {
-    try
+    s->accept(this);
+}
+
+std::any MPROCESS::Interpreter::visitPrint(Print *stmt)
+{
+    std::any val = evaluate(stmt->expr);
+    if (val.type() == typeid(double))
     {
-        std::any value = evaluate(expr);
-        if (value.has_value())
-        {
-            if (value.type() == typeid(std::string))
-            {
-                std::cout << std::any_cast<std::string>(value) << std::endl;
-            }
-            else if (value.type() == typeid(double))
-            {
-                std::cout << std::any_cast<double>(value);
-            }
-        }
+        std::cout << std::any_cast<double>(val);
     }
-    catch (MontRunTimeError error)
+    else if (val.type() == typeid(const char *))
     {
-        Mont::instance().runtime_error(error);
+        std::cout << std::any_cast<const char *>(val);
     }
+    else if (val.type() == typeid(std::string))
+    {
+        std::cout << std::any_cast<std::string>(val);
+    }
+    else if (val.type() == typeid(char))
+    {
+        std::cout << std::any_cast<char>(val);
+    }
+
+    return nullptr;
 };
+
 std::any MPROCESS::Interpreter::visitGrouping(Grouping *expr) { return evaluate(expr->expr); };
 std::any MPROCESS::Interpreter::visitLiteral(Literal *expr) { return expr->value; };
 std::any MPROCESS::Interpreter::visitUnary(Unary *expr)

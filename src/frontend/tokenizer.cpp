@@ -19,32 +19,49 @@ bool MPROCESS::Tokenizer::validate_identifier_token(const std::string &tok) cons
     return true;
 }
 
-MPROCESS::ILexeme &MPROCESS::Tokenizer::tokenizer_peek()
+void MPROCESS::Tokenizer::scan_string()
 {
-    return this->lexemes[lexeme_cursor];
+
+    std::cout << "starting here : " << tokenizer_peek() << std::endl;
+    while (tokenizer_peek() != '"' && !tokenizer_is_at_end())
+    {
+
+        if (tokenizer_peek() == '\n')
+        {
+            line++;
+        }
+        tokenizer_advance();
+    }
+    std::cout << "ending here : " << tokenizer_peek() << std::endl;
+    if (tokenizer_is_at_end())
+    {
+        Mont::instance().error(line, "Unterminated string.");
+    }
+
+    tokenizer_advance();
+
+    std::string value = src.substr(start + 1, current - start - 1);
+
+    add_tok(TOKEN_TYPE::TOK_STRING_LIT, value);
 };
-MPROCESS::ILexeme &MPROCESS::Tokenizer::tokenizer_peek_next()
+
+char MPROCESS::Tokenizer::tokenizer_peek()
 {
-    return this->lexemes[lexeme_cursor + 1];
+    return current >= src.length() ? '\0' : src[current];
 };
-MPROCESS::ILexeme &MPROCESS::Tokenizer::tokenizer_advance()
+char MPROCESS::Tokenizer::tokenizer_peek_next()
 {
-    lexeme_cursor++;
-    return this->lexemes[lexeme_cursor];
+    return current + 1 >= src.length() ? '\0' : src[current + 1];
+};
+char MPROCESS::Tokenizer::tokenizer_advance()
+{
+    current++;
+    return src[current - 1];
 };
 
 bool MPROCESS::Tokenizer::tokenizer_is_at_end()
 {
-    return this->lexeme_cursor >= this->lexemes.size();
-};
-
-void MPROCESS::Tokenizer::push_token(TOKEN_TYPE type, ILexeme lexeme_data, std::any literal)
-{
-    tokens.push_back(new IToken(type, lexeme_data, literal));
-}
-void MPROCESS::Tokenizer::push_token(TOKEN_TYPE type, ILexeme lexeme_data)
-{
-    push_token(type, lexeme_data, nullptr);
+    return this->current >= src.length();
 };
 
 bool MPROCESS::Tokenizer::is_digit(const char c)
@@ -52,164 +69,199 @@ bool MPROCESS::Tokenizer::is_digit(const char c)
     return c >= '0' && c <= '9';
 }
 
-bool MPROCESS::Tokenizer::is_number(const ILexeme &lexeme_data)
+bool MPROCESS::Tokenizer::is_alpha(const char c)
 {
-    for (char c : lexeme_data.value)
-    {
-        if (!is_digit(c) && c != '.')
-        {
-            Mont::instance().error(lexeme_data.line, lexeme_data.position, "Unexpected character");
-            return false;
-        }
-    }
-
-    return true;
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
-void MPROCESS::Tokenizer::tokenize()
+bool MPROCESS::Tokenizer::is_alnum(const char c)
 {
-    while (!tokenizer_is_at_end())
+    return is_alpha(c) || is_digit(c);
+}
+
+MPROCESS::Tokenizer::Tokenizer(const std::string &src)
+{
+
+    this->src = src;
+    this->tokens = tokenize();
+};
+
+bool MPROCESS::Tokenizer::match(char expec)
+{
+    if (tokenizer_is_at_end() || src[current] != expec)
     {
-        ILexeme lexeme_data = tokenizer_peek();
-        TOKEN_TYPE type = TOKEN_TYPE::TOK_ERROR;
+        return false;
+    }
 
-        std::string lexeme = tokenizer_peek().value;
+    current++;
+    return true;
+};
 
-        if (lexeme == "{")
+void MPROCESS::Tokenizer::scan_token()
+{
+    char c = tokenizer_advance();
+    switch (c)
+    {
+    case '(':
+        add_tok(TOKEN_TYPE::TOK_LPAREN);
+        break;
+    case ')':
+        add_tok(TOKEN_TYPE::TOK_RPAREN);
+        break;
+    case '{':
+        add_tok(TOKEN_TYPE::TOK_LCURLY);
+        break;
+    case '}':
+        add_tok(TOKEN_TYPE::TOK_RCURLY);
+        break;
+    case ',':
+        add_tok(TOKEN_TYPE::TOK_COMMA);
+        break;
+
+    case '/':
+        if (match('/'))
         {
-            push_token(TOKEN_TYPE::TOK_LCURLY, lexeme_data);
-        }
-        else if (lexeme == "}")
-        {
-            push_token(TOKEN_TYPE::TOK_RCURLY, lexeme_data);
-        }
-        else if (lexeme == "(")
-        {
-            push_token(TOKEN_TYPE::TOK_LPAREN, lexeme_data);
-        }
-        else if (lexeme == ")")
-        {
-            push_token(TOKEN_TYPE::TOK_RPAREN, lexeme_data);
-        }
-        else if (lexeme == ",")
-        {
-            push_token(TOKEN_TYPE::TOK_COMMA, lexeme_data);
-        }
-        else if (lexeme == "+")
-        {
-            push_token(TOKEN_TYPE::TOK_ADD, lexeme_data);
-        }
-        else if (lexeme == "-")
-        {
-            push_token(TOKEN_TYPE::TOK_SUB, lexeme_data);
-        }
-        else if (lexeme == ";")
-        {
-            push_token(TOKEN_TYPE::TOK_SEMI, lexeme_data);
-        }
-        else if (lexeme == "=")
-        {
-            push_token(TOKEN_TYPE::TOK_EQUALS, lexeme_data);
-        }
-        else if (lexeme == "!")
-        {
-            push_token(TOKEN_TYPE::TOK_BANG, lexeme_data);
-        }
-        else if (lexeme == ">")
-        {
-            push_token(TOKEN_TYPE::TOK_GREATER, lexeme_data);
-        }
-        else if (lexeme == "<")
-        {
-            push_token(TOKEN_TYPE::TOK_LESS, lexeme_data);
-        }
-        else if (lexeme == "/")
-        {
-            push_token(TOKEN_TYPE::TOK_DIV, lexeme_data);
-        }
-        else if (lexeme == "*")
-        {
-            push_token(TOKEN_TYPE::TOK_MULT, lexeme_data);
-        }
-        else if (lexeme == "==")
-        {
-            push_token(TOKEN_TYPE::TOK_EQUAL_EQUALS, lexeme_data);
-        }
-        else if (lexeme == "!=")
-        {
-            push_token(TOKEN_TYPE::TOK_BANG_EQUALS, lexeme_data);
-        }
-        else if (lexeme == ">=")
-        {
-            push_token(TOKEN_TYPE::TOK_GREATER_EQUALS, lexeme_data);
-        }
-        else if (lexeme == "<=")
-        {
-            push_token(TOKEN_TYPE::TOK_LESS_EQUALS, lexeme_data);
-        }
-        else if (lexeme == "\"")
-        {
-            tokenizer_advance();
-            while (!tokenizer_is_at_end() && tokenizer_peek().value != "\"")
+            // A comment goes until the end of the line.
+            while (tokenizer_peek() != '\n' && !tokenizer_is_at_end())
             {
-                tokens.push_back(new IToken(TOKEN_TYPE::TOK_STRING_LIT, tokenizer_peek(), tokenizer_peek().value));
+                // Consume newline
                 tokenizer_advance();
             }
+        }
+        else if (match('*'))
+        {
+            while (tokenizer_peek() != '*' && tokenizer_peek_next() != '/' && !tokenizer_is_at_end())
+            {
+                if (tokenizer_peek() == '\n')
+                {
+                    line++;
+                }
+                tokenizer_advance();
+            }
+
+            // Unterminated block comment
             if (tokenizer_is_at_end())
             {
-                Mont::instance().error(tokenizer_peek().line, tokenizer_peek().position, "Unterminated string");
+                Mont::instance().error(line, "Unterminated block comment.");
             }
-            else
+
+            // Closing */
+            tokenizer_advance();
+
+            if (tokenizer_is_at_end())
             {
-                tokenizer_advance(); // Skip closing termination quote
+                Mont::instance().error(line, "Unterminated block comment.");
             }
-            continue;
-        }
-        else if (is_number(lexeme_data))
-        {
-            double number = std::stod(lexeme_data.value);
-            push_token(TOKEN_TYPE::TOK_INT_LIT, lexeme_data, number);
+
+            // Closing /
+            tokenizer_advance();
         }
         else
         {
-            bool is_keyword = false;
-            for (auto &p : kw_map)
-            {
-                if (lexeme == p.first)
-                {
-                    push_token(p.second, lexeme_data);
-                    is_keyword = true;
-                    break;
-                }
-            }
-            if (!is_keyword && validate_identifier_token(lexeme))
-            {
-                push_token(TOKEN_TYPE::TOK_IDENTIFIER, lexeme_data);
-            }
-            else
-            {
-                Mont::instance().error(lexeme_data.line, lexeme_data.position, "Unexpected character");
-            }
+            add_tok(TOKEN_TYPE::TOK_DIV);
         }
+        break;
+
+    case '-':
+        add_tok(TOKEN_TYPE::TOK_SUB);
+        break;
+    case '+':
+        add_tok(TOKEN_TYPE::TOK_ADD);
+        break;
+    case ';':
+        add_tok(TOKEN_TYPE::TOK_SEMI);
+        break;
+    case '*':
+        add_tok(TOKEN_TYPE::TOK_MULT);
+        break;
+
+    case '!':
+        add_tok(match('=') ? TOKEN_TYPE::TOK_BANG_EQUALS : TOKEN_TYPE::TOK_BANG);
+        break;
+    case '=':
+        add_tok(match('=') ? TOKEN_TYPE::TOK_EQUAL_EQUALS : TOKEN_TYPE::TOK_EQUALS);
+        break;
+    case '<':
+        add_tok(match('=') ? TOKEN_TYPE::TOK_LESS_EQUALS : TOKEN_TYPE::TOK_LESS);
+        break;
+    case '>':
+        add_tok(match('=') ? TOKEN_TYPE::TOK_GREATER_EQUALS : TOKEN_TYPE::TOK_GREATER);
+        break;
+
+    case ' ':
+    case '\r':
+    case '\t':
+        break;
+    case '\n':
+        line++;
+        break;
+
+    case '"':
+        scan_string();
+        break;
+
+    default:
+        if (is_digit(c))
+        {
+            scan_number();
+        }
+        else if (is_alpha(c))
+        {
+            scan_identifier();
+        }
+        else
+        {
+            Mont::instance().error(line, "Unexpected character");
+        }
+        break;
+    }
+};
+
+void MPROCESS::Tokenizer::scan_number()
+{
+    while (is_digit(tokenizer_peek()))
+    {
         tokenizer_advance();
     }
 
-    // Add EOF token at the end
-    tokens.push_back(new IToken(TOKEN_TYPE::TOK_EOF, {}, nullptr));
-}
+    if (tokenizer_peek() == '.' && is_digit(tokenizer_peek_next()))
+    {
+        tokenizer_advance();
+    }
 
-MPROCESS::Tokenizer::Tokenizer(const LexemeVector &lexemes_to_tokenize)
+    while (is_digit(tokenizer_peek()))
+    {
+        tokenizer_advance();
+    }
+
+    add_tok(TOKEN_TYPE::TOK_INT_LIT, std::any_cast<double>(std::stod(src.substr(start, current))));
+};
+void MPROCESS::Tokenizer::scan_identifier()
 {
+    while (is_alnum(tokenizer_peek()))
+    {
+        tokenizer_advance();
+    }
 
-    lexemes = lexemes_to_tokenize;
-    lexeme_cursor = 0;
+    std::string lexeme = src.substr(start, current);
+    TOKEN_TYPE type = kw_map[lexeme];
 
-    tokenize();
+    add_tok(type);
 };
 
-[[nodiscard]] std::vector<MPROCESS::IToken *> &MPROCESS::Tokenizer::get_tokens()
+[[nodiscard]] std::vector<MPROCESS::IToken *> MPROCESS::Tokenizer::tokenize()
 {
+
+    while (!tokenizer_is_at_end())
+    {
+        start = current;
+        scan_token();
+    }
+
+    tokens.push_back(new IToken(MPROCESS::TOKEN_TYPE::TOK_EOF, "", nullptr, line));
+
     return tokens;
+    // Add EOF token at the end
 };
 
 MPROCESS::Tokenizer::~Tokenizer() {};

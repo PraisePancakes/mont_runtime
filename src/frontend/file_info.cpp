@@ -24,7 +24,7 @@ MPROCESS::MFILESYSTEM::MFile::MFile(const std::string &file_path)
     read_bytes(file_path);
 };
 
-MPROCESS::MFILESYSTEM::ByteArray &MPROCESS::MFILESYSTEM::MFile::get_content_bytes()
+const std::string &MPROCESS::MFILESYSTEM::MFile::get_content_bytes() const
 {
     return bytes;
 }

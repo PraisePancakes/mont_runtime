@@ -1,5 +1,7 @@
 #pragma once
 #include "interfaces/expression.hpp"
+#include "interfaces/statement_base.hpp"
+#include "interfaces/statement.hpp"
 #include <vector>
 #include <iostream>
 #include <initializer_list>
@@ -7,6 +9,7 @@
 
 namespace MPROCESS
 {
+
     class Parser
     {
         size_t current_token_index = 0;
@@ -58,19 +61,41 @@ namespace MPROCESS
 
         std::vector<IToken *> tokens_to_parse;
 
+        IBaseStmt *print_statement()
+        {
+            IBaseExpr *expr = expression();
+            parser_consume(TOKEN_TYPE::TOK_SEMI, "Expected ';' after value");
+            return new Print(expr);
+        };
+        IBaseStmt *expression_statement()
+        {
+            IBaseExpr *expr = expression();
+            parser_consume(TOKEN_TYPE::TOK_SEMI, "Expected ';' after expression");
+            return new Expression(expr);
+        };
+        IBaseStmt *statement()
+        {
+            if (match_token_to_current({TOKEN_TYPE::TOK_PRINT}))
+            {
+                return print_statement();
+            };
+
+            return expression_statement();
+        };
+
     public:
         Parser(const std::vector<IToken *> &tokens);
-        IBaseExpr *parser_parse()
+        std::vector<IBaseStmt *> parse()
         {
-            try
+            std::vector<IBaseStmt *> statements;
+            while (!parser_is_at_end())
             {
-                return expression();
+                statements.push_back(statement());
             }
-            catch (ParserError e)
-            {
-                return nullptr;
-            }
+
+            return statements;
         };
+
         ~Parser();
     };
 }

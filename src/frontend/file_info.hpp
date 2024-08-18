@@ -8,11 +8,11 @@ namespace MPROCESS
 {
     namespace MFILESYSTEM
     {
-        using ByteArray = std::vector<unsigned char>;
+
         class MFile
         {
 
-            ByteArray bytes;
+            std::string bytes;
             bool read_bytes(const std::string &file_path);
 
         public:
@@ -22,7 +22,7 @@ namespace MPROCESS
             {
                 return read_bytes(file_path);
             };
-            ByteArray &get_content_bytes();
+            const std::string &get_content_bytes() const;
 
             void view_contents(bool BY_LINE) const;
         };

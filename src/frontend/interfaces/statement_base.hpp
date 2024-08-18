@@ -7,9 +7,9 @@ namespace MPROCESS
     class IBaseStmt
     {
     public:
-        IBaseStmt() {};
+        IBaseStmt();
         virtual std::any accept(IStmtVisitor *vis) = 0;
-        ~IBaseStmt() {};
+        ~IBaseStmt();
     };
 
 }

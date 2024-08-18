@@ -1,8 +1,9 @@
 #pragma once
-#include "lexer.hpp"
+
 #include "interfaces/token.hpp"
 #include <string>
 #include <any>
+#include <vector>
 
 namespace MPROCESS
 {
@@ -15,28 +16,48 @@ namespace MPROCESS
 
     class Tokenizer
     {
-        LexemeVector lexemes;
+        int start = 0;
+        int current = 0;
+        int line = 1;
+
+        std::string src;
         std::vector<IToken *> tokens;
-        size_t lexeme_cursor;
 
         [[nodiscard]] bool validate_identifier_token(const std::string &tok) const;
-
+        bool match(char expec);
         bool tokenizer_is_at_end();
-        ILexeme &tokenizer_peek();
-        ILexeme &tokenizer_advance();
-        ILexeme &tokenizer_peek_next();
+        char tokenizer_peek();
+        char tokenizer_advance();
 
-        void push_token(TOKEN_TYPE type, ILexeme lexeme_data, std::any literal);
-        void push_token(TOKEN_TYPE type, ILexeme lexeme_data);
+        void scan_string();
+
+        char tokenizer_peek_next();
+
+        void scan_token();
+
+        void add_tok(TOKEN_TYPE t, std::any lit)
+        {
+            std::string lexeme = src.substr(start, current);
+
+            tokens.push_back(new IToken(t, lexeme, lit, line));
+        }
+
+        void add_tok(TOKEN_TYPE t)
+        {
+
+            add_tok(t, nullptr);
+        };
+        void scan_number();
+        void scan_identifier();
         bool is_digit(const char c);
-
-        bool is_number(const ILexeme &lexeme_data);
-        void tokenize();
+        bool is_alpha(const char c);
+        bool is_alnum(const char c);
+        [[nodiscard]] std::vector<IToken *> tokenize();
 
     public:
-        Tokenizer(const LexemeVector &lexemes_to_tokenize);
+        Tokenizer(const std::string &src);
 
-        [[nodiscard]] std::vector<IToken *> &get_tokens();
+        [[nodiscard]] std::vector<IToken *> &get_tokens() { return tokens; };
 
         ~Tokenizer();
     };
