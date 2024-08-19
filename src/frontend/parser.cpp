@@ -46,12 +46,12 @@ MPROCESS::IBaseExpr *MPROCESS::Parser::primary()
 {
     if (match_token_to_current({TOKEN_TYPE::TOK_FALSE}))
     {
-        return new Literal(false);
+        return new Literal(std::any_cast<bool>(false));
     }
 
     if (match_token_to_current({TOKEN_TYPE::TOK_TRUE}))
     {
-        return new Literal(true);
+        return new Literal(std::any_cast<bool>(true));
     }
 
     if (match_token_to_current({TOKEN_TYPE::TOK_NULL}))

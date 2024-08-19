@@ -1,8 +1,42 @@
 #include "interpreter.hpp"
 #include "mont.hpp"
 #include <sstream>
-// propogate error state up to Interpreter
-// Interpreter dispatches error state
+#include <cmath>
+
+std::string stringify(std::any value)
+{
+
+    if (!value.has_value())
+    {
+        return "null";
+    }
+
+    if (value.type() == typeid(bool))
+    {
+
+        return std::any_cast<bool>(value) ? "true" : "false";
+    }
+
+    if (value.type() == typeid(double))
+    {
+        if (std::trunc(std::any_cast<double>(value)) == std::any_cast<double>(value))
+        {
+            return std::to_string((int)std::any_cast<double>(value));
+        }
+        return std::to_string(std::any_cast<double>(value));
+    }
+
+    else if (value.type() == typeid(std::string))
+    {
+        return std::any_cast<std::string>(value);
+    }
+    else if (value.type() == typeid(char))
+    {
+        return std::to_string(std::any_cast<char>(value));
+    }
+
+    return "";
+};
 
 std::any MPROCESS::Interpreter::evaluate(IBaseExpr *expr)
 {
@@ -101,10 +135,8 @@ std::any MPROCESS::Interpreter::visitBinary(Binary *expr)
         }
         else if ((right.type() == typeid(std::string) && left.type() == typeid(double)))
         {
-
             std::string left_string = std::to_string(std::any_cast<double>(left));
-
-            return std::any_cast<std::string>(right) + left_string;
+            return left_string + std::any_cast<std::string>(right);
         }
 
         throw MontRunTimeError(expr->op_tok, "Operands must be of string or integral type");
@@ -158,22 +190,8 @@ std::any MPROCESS::Interpreter::visitPrint(Print *stmt)
     std::any val = evaluate(stmt->expr);
     std::stringstream stream;
 
-    if (val.type() == typeid(double))
-    {
-        stream << std::any_cast<double>(val);
-    }
-    else if (val.type() == typeid(const char *))
-    {
-        stream << std::any_cast<const char *>(val);
-    }
-    else if (val.type() == typeid(std::string))
-    {
-        stream << std::any_cast<std::string>(val);
-    }
-    else if (val.type() == typeid(char))
-    {
-        stream << std::any_cast<char>(val);
-    }
+    stream << stringify(val);
+    // create stringify method
 
     std::cout << stream.str();
 

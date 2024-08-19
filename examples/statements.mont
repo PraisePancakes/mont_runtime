@@ -1,2 +1,7 @@
-print "hello world\n";
-print 5;
+print "hello world" + "\n";
+print 5 + "\n";
+print true;
+
+
+
+print "\nthis" + 5 + "is";
