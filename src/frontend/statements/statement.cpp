@@ -12,7 +12,7 @@ std::vector<MPROCESS::IBaseStmt *> MPROCESS::Block::get_statements() const
     return this->statements;
 }
 
-std::any MPROCESS::Block::accept(IStmtVisitor *vis)
+std::any MPROCESS::Block::accept(IStmtVisitor<std::any> *vis)
 {
     return vis->visitBlock(this);
 };
@@ -31,7 +31,7 @@ MPROCESS::IBaseExpr *MPROCESS::Expression::get_expression() const
     return expr;
 }
 
-std::any MPROCESS::Expression::accept(IStmtVisitor *vis)
+std::any MPROCESS::Expression::accept(IStmtVisitor<std::any> *vis)
 {
     return vis->visitExpression(this);
 };
@@ -45,7 +45,7 @@ MPROCESS::Print::Print(IBaseExpr *expr)
     this->expr = expr;
 };
 
-std::any MPROCESS::Print::accept(MPROCESS::IStmtVisitor *vis)
+std::any MPROCESS::Print::accept(MPROCESS::IStmtVisitor<std::any> *vis)
 {
     return vis->visitPrint(this);
 };
@@ -70,7 +70,7 @@ MPROCESS::IBaseExpr *MPROCESS::Var::get_initializer()
     return this->initializer;
 };
 
-std::any MPROCESS::Var::accept(MPROCESS::IStmtVisitor *vis)
+std::any MPROCESS::Var::accept(MPROCESS::IStmtVisitor<std::any> *vis)
 {
     return vis->visitVar(this);
 };
@@ -86,7 +86,7 @@ MPROCESS::If::If(IBaseExpr *condition, IBaseStmt *else_branch, IBaseStmt *then_b
     this->then_branch = then_branch;
 };
 
-std::any MPROCESS::If::accept(MPROCESS::IStmtVisitor *vis)
+std::any MPROCESS::If::accept(MPROCESS::IStmtVisitor<std::any> *vis)
 {
     return vis->visitIf(this);
 };
@@ -97,7 +97,7 @@ MPROCESS::If::~If() {};
 
 MPROCESS::While::While(IBaseExpr *c, IBaseStmt *b) : condition(c), body(b) {};
 
-std::any MPROCESS::While::accept(MPROCESS::IStmtVisitor *vis)
+std::any MPROCESS::While::accept(MPROCESS::IStmtVisitor<std::any> *vis)
 {
     return vis->visitWhile(this);
 };

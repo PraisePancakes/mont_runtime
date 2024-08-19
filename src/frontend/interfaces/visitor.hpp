@@ -15,27 +15,29 @@ namespace MPROCESS
     class While;
     class Print;
 
+    template <typename T>
     class IExprVisitor
     {
 
     public:
-        virtual std::any visitBinary(Binary *expr) = 0;
-        virtual std::any visitUnary(Unary *expr) = 0;
-        virtual std::any visitLiteral(Literal *expr) = 0;
-        virtual std::any visitGrouping(Grouping *expr) = 0;
+        virtual T visitBinary(Binary *expr) = 0;
+        virtual T visitUnary(Unary *expr) = 0;
+        virtual T visitLiteral(Literal *expr) = 0;
+        virtual T visitGrouping(Grouping *expr) = 0;
 
         virtual ~IExprVisitor() = default;
     };
 
+    template <typename T>
     class IStmtVisitor
     {
     public:
-        virtual std::any visitBlock(Block *stmt) = 0;
-        virtual std::any visitExpression(Expression *stmt) = 0;
-        virtual std::any visitPrint(Print *stmt) = 0;
-        virtual std::any visitVar(Var *stmt) = 0;
-        virtual std::any visitIf(If *stmt) = 0;
-        virtual std::any visitWhile(While *stmt) = 0;
+        virtual T visitBlock(Block *stmt) = 0;
+        virtual T visitExpression(Expression *stmt) = 0;
+        virtual T visitPrint(Print *stmt) = 0;
+        virtual T visitVar(Var *stmt) = 0;
+        virtual T visitIf(If *stmt) = 0;
+        virtual T visitWhile(While *stmt) = 0;
 
         virtual ~IStmtVisitor() = default;
     };

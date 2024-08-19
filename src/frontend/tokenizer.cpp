@@ -4,15 +4,23 @@
 
 void MPROCESS::Tokenizer::scan_string()
 {
+    std::string str = "";
 
     while (tokenizer_peek() != '"' && !tokenizer_is_at_end())
     {
 
-        if (tokenizer_peek() == '\n')
+        if (tokenizer_peek() == '\\' && tokenizer_peek_next() == 'n') // new line
         {
+            str += '\n';
+            tokenizer_advance();
+            tokenizer_advance();
             line++;
         }
-        tokenizer_advance();
+
+        if (tokenizer_peek() == '"')
+            break;
+
+        str += tokenizer_advance();
     }
 
     if (tokenizer_is_at_end())
@@ -23,9 +31,7 @@ void MPROCESS::Tokenizer::scan_string()
 
     tokenizer_advance();
 
-    std::string lexeme = src.substr(start + 1, current - start - 2);
-
-    add_tok(TOKEN_TYPE::TOK_STRING_LIT, lexeme);
+    add_tok(TOKEN_TYPE::TOK_STRING_LIT, str);
 };
 
 char MPROCESS::Tokenizer::tokenizer_peek()
@@ -224,8 +230,7 @@ void MPROCESS::Tokenizer::scan_identifier()
         tokenizer_advance();
     }
 
-    std::string lexeme = src.substr(start, current);
-
+    std::string lexeme = src.substr(start, current - start);
     TOKEN_TYPE type = kw_map[lexeme];
 
     add_tok(type);

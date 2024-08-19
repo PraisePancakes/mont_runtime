@@ -1,7 +1,7 @@
 #pragma once
-#include "token.hpp"
-#include "visitor.hpp"
-#include "expression_base.hpp"
+#include "../interfaces/token.hpp"
+#include "../interfaces/visitor.hpp"
+#include "../interfaces/expression_base.hpp"
 namespace MPROCESS
 {
 
@@ -18,7 +18,7 @@ namespace MPROCESS
 
         Binary();
 
-        std::any accept(IExprVisitor *vis) override
+        std::any accept(IExprVisitor<std::any> *vis) override
         {
             return vis->visitBinary(this);
         };
@@ -34,7 +34,7 @@ namespace MPROCESS
         IToken *op;
         Unary(IToken *op, IBaseExpr *right);
 
-        std::any accept(IExprVisitor *vis) override
+        std::any accept(IExprVisitor<std::any> *vis) override
         {
             return vis->visitUnary(this);
         };
@@ -49,7 +49,7 @@ namespace MPROCESS
         IBaseExpr *expr;
         Grouping(IBaseExpr *group_expr);
 
-        std::any accept(IExprVisitor *vis) override
+        std::any accept(IExprVisitor<std::any> *vis) override
         {
             return vis->visitGrouping(this);
         };
@@ -65,7 +65,7 @@ namespace MPROCESS
 
         Literal();
 
-        std::any accept(IExprVisitor *vis) override
+        std::any accept(IExprVisitor<std::any> *vis) override
         {
             return vis->visitLiteral(this);
         };

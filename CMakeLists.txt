@@ -10,11 +10,11 @@ add_executable(
     src/frontend/tokenizer.cpp 
     src/frontend/parser.cpp 
     src/frontend/file_info.cpp 
-    src/frontend/interfaces/expression.cpp 
+    src/frontend/expressions/expression.cpp 
     src/frontend/interfaces/token.cpp
     src/frontend/interfaces/expression_base.cpp
     src/frontend/interfaces/statement_base.cpp
-    src/frontend/interfaces/statement.cpp
+    src/frontend/statements/statement.cpp
     src/interpreter.cpp
     src/mont.cpp
     src/frontend/parser_error.hpp

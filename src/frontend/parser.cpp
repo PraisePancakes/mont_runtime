@@ -61,6 +61,7 @@ MPROCESS::IBaseExpr *MPROCESS::Parser::primary()
 
     if (match_token_to_current({TOKEN_TYPE::TOK_STRING_LIT, TOKEN_TYPE::TOK_INT_LIT}))
     {
+
         return new Literal(parser_previous()->literal);
     }
 

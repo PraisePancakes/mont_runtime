@@ -1,8 +1,8 @@
 #pragma once
-#include "statement_base.hpp"
-#include "visitor.hpp"
-#include "expression_base.hpp"
-#include "token.hpp"
+#include "../interfaces/statement_base.hpp"
+#include "../interfaces/visitor.hpp"
+#include "../interfaces/expression_base.hpp"
+#include "../interfaces/token.hpp"
 #include <vector>
 
 namespace MPROCESS
@@ -16,7 +16,7 @@ namespace MPROCESS
 
         std::vector<IBaseStmt *> get_statements() const;
 
-        std::any accept(IStmtVisitor *vis) override;
+        std::any accept(IStmtVisitor<std::any> *vis) override;
         ~Block();
     };
 
@@ -29,7 +29,7 @@ namespace MPROCESS
 
         IBaseExpr *get_expression() const;
 
-        std::any accept(IStmtVisitor *vis) override;
+        std::any accept(IStmtVisitor<std::any> *vis) override;
         ~Expression();
     };
 
@@ -40,7 +40,7 @@ namespace MPROCESS
         IBaseExpr *expr;
         Print(IBaseExpr *expr);
 
-        std::any accept(IStmtVisitor *vis) override;
+        std::any accept(IStmtVisitor<std::any> *vis) override;
 
         ~Print();
     };
@@ -57,7 +57,7 @@ namespace MPROCESS
 
         IBaseExpr *get_initializer();
 
-        std::any accept(IStmtVisitor *vis) override;
+        std::any accept(IStmtVisitor<std::any> *vis) override;
         ~Var();
     };
 
@@ -69,7 +69,7 @@ namespace MPROCESS
         IBaseStmt *else_branch;
         IBaseStmt *then_branch;
         If(IBaseExpr *condition, IBaseStmt *else_branch, IBaseStmt *then_branch);
-        std::any accept(IStmtVisitor *vis) override;
+        std::any accept(IStmtVisitor<std::any> *vis) override;
         ~If();
     };
 
@@ -80,7 +80,7 @@ namespace MPROCESS
         IBaseExpr *condition;
         IBaseStmt *body;
         While(IBaseExpr *c, IBaseStmt *b);
-        std::any accept(IStmtVisitor *vis) override;
+        std::any accept(IStmtVisitor<std::any> *vis) override;
         ~While();
     };
 };

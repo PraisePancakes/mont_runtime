@@ -1,5 +1,6 @@
 #include "interpreter.hpp"
 #include "mont.hpp"
+#include <sstream>
 // propogate error state up to Interpreter
 // Interpreter dispatches error state
 
@@ -155,22 +156,26 @@ void MPROCESS::Interpreter::execute(MPROCESS::IBaseStmt *s)
 std::any MPROCESS::Interpreter::visitPrint(Print *stmt)
 {
     std::any val = evaluate(stmt->expr);
+    std::stringstream stream;
+
     if (val.type() == typeid(double))
     {
-        std::cout << std::any_cast<double>(val);
+        stream << std::any_cast<double>(val);
     }
     else if (val.type() == typeid(const char *))
     {
-        std::cout << std::any_cast<const char *>(val);
+        stream << std::any_cast<const char *>(val);
     }
     else if (val.type() == typeid(std::string))
     {
-        std::cout << std::any_cast<std::string>(val);
+        stream << std::any_cast<std::string>(val);
     }
     else if (val.type() == typeid(char))
     {
-        std::cout << std::any_cast<char>(val);
+        stream << std::any_cast<char>(val);
     }
+
+    std::cout << stream.str();
 
     return nullptr;
 };

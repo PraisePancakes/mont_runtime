@@ -8,7 +8,7 @@ namespace MPROCESS
     {
     public:
         IBaseExpr();
-        virtual std::any accept(IExprVisitor *vis) = 0;
+        virtual std::any accept(IExprVisitor<std::any> *vis) = 0;
         ~IBaseExpr();
     };
 };

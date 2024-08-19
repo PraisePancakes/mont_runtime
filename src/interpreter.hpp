@@ -1,9 +1,9 @@
 #pragma once
 #include <iostream>
 #include "frontend/interfaces/visitor.hpp"
-#include "frontend/interfaces/expression.hpp"
+#include "frontend/expressions/expression.hpp"
 #include "frontend/interfaces/expression_base.hpp"
-#include "frontend/interfaces/statement.hpp"
+#include "frontend/statements/statement.hpp"
 #include "frontend/interfaces/statement_base.hpp"
 #include "frontend/runtime_error.hpp"
 
@@ -15,7 +15,7 @@
 namespace MPROCESS
 {
 
-    class Interpreter : public IExprVisitor, public IStmtVisitor
+    class Interpreter : public IExprVisitor<std::any>, public IStmtVisitor<std::any>
     {
 
         std::any evaluate(IBaseExpr *expr);

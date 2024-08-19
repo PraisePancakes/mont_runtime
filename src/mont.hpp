@@ -7,7 +7,7 @@
 #include "frontend/interfaces/expression_base.hpp"
 #include "frontend/runtime_error.hpp"
 #include "frontend/interfaces/statement_base.hpp"
-#include "frontend/interfaces/statement.hpp"
+#include "frontend/statements/statement.hpp"
 #include "interpreter.hpp"
 
 static bool had_ct_error = false;
