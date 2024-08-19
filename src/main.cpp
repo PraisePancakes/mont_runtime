@@ -11,13 +11,12 @@ int main(int argc, char **argv)
     if (argc > 2)
     {
         std::cout << argv[0] << " : " << argv[1] << std::endl;
-        std::cout << "[ USAGE ] : mont [script]" << std::endl;
+        std::cout << "[ USAGE ] : <mont_build_path> <script_path>.mont" << std::endl;
         exit(EXIT_FAILURE);
     }
     else if (argc == 2)
     {
         Mont::instance().run_file(argv[1]);
-       
     }
     else if (argc == 0)
     {
