@@ -23,7 +23,6 @@ namespace MPROCESS
         std::string src;
         std::vector<IToken *> tokens;
 
-        [[nodiscard]] bool validate_identifier_token(const std::string &tok) const;
         bool match(char expec);
         bool tokenizer_is_at_end();
         char tokenizer_peek();
@@ -37,7 +36,7 @@ namespace MPROCESS
 
         void add_tok(TOKEN_TYPE t, std::any lit)
         {
-            std::string lexeme = src.substr(start, current);
+            std::string lexeme = src.substr(start, current - start);
 
             tokens.push_back(new IToken(t, lexeme, lit, line));
         }

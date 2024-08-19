@@ -2,28 +2,9 @@
 #include "../mont.hpp"
 #include <any>
 
-bool MPROCESS::Tokenizer::validate_identifier_token(const std::string &tok) const
-{
-    if (tok.empty())
-        return false;
-
-    if (!std::isalpha(tok[0]) && tok[0] != '_')
-        return false;
-
-    for (size_t i = 1; i < tok.length(); ++i)
-    {
-        if (!std::isalnum(tok[i]) && tok[i] != '_')
-            return false;
-    }
-
-    return true;
-}
-
 void MPROCESS::Tokenizer::scan_string()
 {
 
-    std::cout << "starting here : " << tokenizer_peek() << std::endl;
-    std::string literal = "";
     while (tokenizer_peek() != '"' && !tokenizer_is_at_end())
     {
 
@@ -31,17 +12,20 @@ void MPROCESS::Tokenizer::scan_string()
         {
             line++;
         }
-        literal += tokenizer_advance();
+        tokenizer_advance();
     }
 
     if (tokenizer_is_at_end())
     {
         Mont::instance().error(line, "Unterminated string.");
+        return;
     }
 
     tokenizer_advance();
 
-    add_tok(TOKEN_TYPE::TOK_STRING_LIT, literal);
+    std::string lexeme = src.substr(start + 1, current - start - 2);
+
+    add_tok(TOKEN_TYPE::TOK_STRING_LIT, lexeme);
 };
 
 char MPROCESS::Tokenizer::tokenizer_peek()
@@ -194,11 +178,9 @@ void MPROCESS::Tokenizer::scan_token()
     case '\n':
         line++;
         break;
-
     case '"':
         scan_string();
         break;
-
     default:
         if (is_digit(c))
         {
@@ -243,6 +225,7 @@ void MPROCESS::Tokenizer::scan_identifier()
     }
 
     std::string lexeme = src.substr(start, current);
+
     TOKEN_TYPE type = kw_map[lexeme];
 
     add_tok(type);
