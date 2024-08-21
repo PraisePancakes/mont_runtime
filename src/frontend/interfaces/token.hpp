@@ -9,6 +9,7 @@ namespace MPROCESS
 
     enum class TOKEN_TYPE
     {
+        TOK_ERROR,
         TOK_ADD,
         TOK_SUB,
         TOK_MULT,
@@ -51,7 +52,6 @@ namespace MPROCESS
         TOK_WHILE,
         TOK_ENTRY,
         TOK_EOF,
-        TOK_ERROR,
 
     };
 

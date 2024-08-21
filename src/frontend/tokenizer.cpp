@@ -232,8 +232,12 @@ void MPROCESS::Tokenizer::scan_identifier()
 
     std::string lexeme = src.substr(start, current - start);
     TOKEN_TYPE type = kw_map[lexeme];
-
-    add_tok(type);
+    if (type == TOKEN_TYPE::TOK_ERROR)
+    {
+        add_tok(TOKEN_TYPE::TOK_IDENTIFIER);
+    }
+    else
+        add_tok(type);
 };
 
 [[nodiscard]] std::vector<MPROCESS::IToken *> MPROCESS::Tokenizer::tokenize()

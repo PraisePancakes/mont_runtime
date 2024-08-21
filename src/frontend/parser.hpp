@@ -85,6 +85,38 @@ namespace MPROCESS
             return expression_statement();
         };
 
+        IBaseStmt *var_decl()
+        {
+
+            // var x = 45;
+            IToken *id = parser_consume(TOKEN_TYPE::TOK_IDENTIFIER, "Expect variable name.");
+
+            IBaseExpr *initializer = nullptr;
+            if (match_token_to_current({TOKEN_TYPE::TOK_EQUALS}))
+            {
+                initializer = expression();
+            }
+
+            parser_consume(TOKEN_TYPE::TOK_SEMI, "Expect ';' after expression");
+            return new Var(id, initializer);
+        };
+
+        IBaseStmt *decl()
+        {
+            try
+            {
+                if (match_token_to_current({TOKEN_TYPE::TOK_VAR}))
+                    return var_decl();
+
+                return statement();
+            }
+            catch (ParserError e)
+            {
+                parser_synchronize();
+                return nullptr;
+            }
+        }
+
     public:
         Parser(const std::vector<IToken *> &tokens);
         std::vector<IBaseStmt *> parse()
@@ -93,7 +125,7 @@ namespace MPROCESS
             while (!parser_is_at_end())
             {
 
-                statements.push_back(statement());
+                statements.push_back(decl());
             }
 
             return statements;

@@ -1,5 +1,5 @@
 #include "interpreter.hpp"
-#include "mont.hpp"
+#include "../mont.hpp"
 #include <sstream>
 #include <cmath>
 
@@ -99,7 +99,6 @@ void MPROCESS::Interpreter::check_unary_operand(MPROCESS::IToken *op, std::any o
 {
     if (operand.type() != typeid(double))
     {
-        std::cout << "here";
         throw new MontRunTimeError(op, "Unary operand must be of integral type");
     };
 };
@@ -191,7 +190,6 @@ std::any MPROCESS::Interpreter::visitPrint(Print *stmt)
     std::stringstream stream;
 
     stream << stringify(val);
-    // create stringify method
 
     std::cout << stream.str();
 

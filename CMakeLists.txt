@@ -15,7 +15,8 @@ add_executable(
     src/frontend/interfaces/expression_base.cpp
     src/frontend/interfaces/statement_base.cpp
     src/frontend/statements/statement.cpp
-    src/interpreter.cpp
+    src/backend/interpreter.cpp
     src/mont.cpp
     src/frontend/parser_error.hpp
+    src/frontend/environment.cpp
     )

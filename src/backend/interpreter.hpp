@@ -1,11 +1,12 @@
 #pragma once
 #include <iostream>
-#include "frontend/interfaces/visitor.hpp"
-#include "frontend/expressions/expression.hpp"
-#include "frontend/interfaces/expression_base.hpp"
-#include "frontend/statements/statement.hpp"
-#include "frontend/interfaces/statement_base.hpp"
-#include "frontend/runtime_error.hpp"
+#include "../frontend/interfaces/visitor.hpp"
+#include "../frontend/expressions/expression.hpp"
+#include "../frontend/interfaces/expression_base.hpp"
+#include "../frontend/statements/statement.hpp"
+#include "../frontend/interfaces/statement_base.hpp"
+#include "../frontend/runtime_error.hpp"
+#include "../frontend/environment.hpp"
 
 #include <vector>
 
@@ -24,7 +25,17 @@ namespace MPROCESS
         std::any visitBlock(Block *stmt) override { return nullptr; };
         std::any visitExpression(Expression *stmt) override { return nullptr; };
         std::any visitIf(If *stmt) override { return nullptr; };
-        std::any visitVar(Var *stmt) override { return nullptr; };
+        std::any visitVar(Var *stmt) override
+        {
+            std::any val = nullptr;
+            if (stmt->initializer)
+            {
+                val = evaluate(stmt->initializer);
+            }
+
+            env->define(stmt->name->lexeme, val);
+            return nullptr;
+        };
         std::any visitWhile(While *stmt) override { return nullptr; };
 
         bool equals(std::any left, std::any right);
@@ -38,8 +49,14 @@ namespace MPROCESS
         void check_binary_operands(MPROCESS::IToken *op, std::any left, std::any right);
         void execute(MPROCESS::IBaseStmt *s);
 
+        // environment
+        Environment *env;
+
     public:
-        Interpreter() {};
+        Interpreter()
+        {
+            env = new Environment();
+        };
 
         void interpret(std::vector<MPROCESS::IBaseStmt *> statements);
 
@@ -48,6 +65,10 @@ namespace MPROCESS
         std::any visitGrouping(Grouping *expr) override;
         std::any visitLiteral(Literal *expr) override;
         std::any visitUnary(Unary *expr) override;
+        std::any visitVariable(Variable *expr) override
+        {
+            return env->get(expr->name);
+        };
 
         ~Interpreter();
     };

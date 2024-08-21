@@ -14,6 +14,7 @@ namespace MPROCESS
         {"print", TOKEN_TYPE::TOK_PRINT},
         {"true", TOKEN_TYPE::TOK_TRUE},
         {"false", TOKEN_TYPE::TOK_FALSE},
+        {"var", TOKEN_TYPE::TOK_VAR},
     };
 
     class Tokenizer

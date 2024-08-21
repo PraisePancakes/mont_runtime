@@ -72,6 +72,11 @@ MPROCESS::IBaseExpr *MPROCESS::Parser::primary()
         return new Grouping(expr);
     }
 
+    if (match_token_to_current({TOKEN_TYPE::TOK_IDENTIFIER}))
+    {
+        return new Variable(parser_previous());
+    }
+
     throw error(parser_peek(), "Expected an expression");
 };
 

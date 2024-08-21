@@ -72,4 +72,19 @@ namespace MPROCESS
 
         ~Literal();
     };
+
+    class Variable final : public IBaseExpr
+    {
+    public:
+        IToken *name;
+        Variable(IToken *name)
+        {
+            this->name = name;
+        };
+
+        std::any accept(IExprVisitor<std::any> *vis) override
+        {
+            return vis->visitVariable(this);
+        }
+    };
 }

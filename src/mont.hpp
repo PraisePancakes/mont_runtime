@@ -8,7 +8,7 @@
 #include "frontend/runtime_error.hpp"
 #include "frontend/interfaces/statement_base.hpp"
 #include "frontend/statements/statement.hpp"
-#include "interpreter.hpp"
+#include "backend/interpreter.hpp"
 
 static bool had_ct_error = false;
 static bool had_rt_error = false;
