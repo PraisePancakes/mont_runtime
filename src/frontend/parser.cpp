@@ -137,9 +137,29 @@ MPROCESS::IBaseExpr *MPROCESS::Parser::comparison()
     return expr;
 };
 
+MPROCESS::IBaseExpr *MPROCESS::Parser::assignment()
+{
+    IBaseExpr *expr = equality();
+    if (match_token_to_current({TOKEN_TYPE::TOK_EQUALS}))
+    {
+        MPROCESS::IToken *eq = parser_previous();
+        MPROCESS::IBaseExpr *rvalue = assignment();
+
+        if (typeid(Variable *) == typeid(expr))
+        {
+            IToken *lvalue = ((Variable *)expr)->name;
+            return new Assignment(lvalue, rvalue);
+        }
+
+        Mont::instance().error(*eq, "Invalid assignment expression");
+    }
+
+    return expr;
+};
+
 MPROCESS::IBaseExpr *MPROCESS::Parser::expression()
 {
-    return equality();
+    return assignment();
 }
 MPROCESS::IBaseExpr *MPROCESS::Parser::equality()
 {

@@ -87,4 +87,25 @@ namespace MPROCESS
             return vis->visitVariable(this);
         }
     };
+
+    class Assignment final : public IBaseExpr
+    {
+
+    public:
+        IToken *lvalue;
+        IBaseExpr *expr;
+
+        Assignment(IToken *lval, IBaseExpr *expr)
+        {
+            this->lvalue = lval;
+            this->expr = expr;
+        };
+
+        std::any accept(IExprVisitor<std::any> *vis) override
+        {
+            return vis->visitAssignment(this);
+        }
+
+        ~Assignment() {};
+    };
 }

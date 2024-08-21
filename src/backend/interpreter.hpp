@@ -21,6 +21,10 @@ namespace MPROCESS
 
         std::any evaluate(IBaseExpr *expr);
         std::any visitPrint(Print *stmt) override;
+        std::any visitAssignment(Assignment *a) override
+        {
+            return nullptr;
+        };
 
         std::any visitBlock(Block *stmt) override { return nullptr; };
         std::any visitExpression(Expression *stmt) override { return nullptr; };

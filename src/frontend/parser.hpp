@@ -17,6 +17,7 @@ namespace MPROCESS
 
         // grammar rules
         IBaseExpr *comparison();
+        IBaseExpr *assignment();
         IBaseExpr *primary();
         IBaseExpr *unary();
         IBaseExpr *expression();

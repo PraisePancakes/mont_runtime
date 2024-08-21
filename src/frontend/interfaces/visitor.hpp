@@ -15,18 +15,19 @@ namespace MPROCESS
     class While;
     class Print;
     class Variable;
+    class Assignment;
 
     template <typename T>
     class IExprVisitor
     {
 
     public:
-        virtual T visitBinary(Binary *expr) = 0;
-        virtual T visitUnary(Unary *expr) = 0;
-        virtual T visitLiteral(Literal *expr) = 0;
-        virtual T visitGrouping(Grouping *expr) = 0;
-        virtual T visitVariable(Variable *var) = 0;
-
+        virtual T visitBinary(Binary *b) = 0;
+        virtual T visitUnary(Unary *u) = 0;
+        virtual T visitLiteral(Literal *l) = 0;
+        virtual T visitGrouping(Grouping *g) = 0;
+        virtual T visitVariable(Variable *v) = 0;
+        virtual T visitAssignment(Assignment *a) = 0;
         virtual ~IExprVisitor() = default;
     };
 
