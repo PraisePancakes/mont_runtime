@@ -21,14 +21,37 @@ namespace MPROCESS
 
         std::any evaluate(IBaseExpr *expr);
         std::any visitPrint(Print *stmt) override;
+
         std::any visitAssignment(Assignment *a) override
         {
+            std::any val = evaluate(a);
+            env->assign(a->lvalue, val);
+            return val;
+        };
+
+        void execute_block(std::vector<IBaseStmt *> stmts, Environment *e)
+        {
+
+            Environment *prev_env = this->env;
+            this->env = e;
+            for (auto &s : stmts)
+            {
+                execute(s);
+            }
+
+            this->env = prev_env;
+        };
+
+        std::any visitBlock(Block *stmt) override
+        {
+            execute_block(stmt->statements, new Environment(env));
             return nullptr;
         };
 
-        std::any visitBlock(Block *stmt) override { return nullptr; };
         std::any visitExpression(Expression *stmt) override { return nullptr; };
+
         std::any visitIf(If *stmt) override { return nullptr; };
+
         std::any visitVar(Var *stmt) override
         {
             std::any val = nullptr;
@@ -37,9 +60,10 @@ namespace MPROCESS
                 val = evaluate(stmt->initializer);
             }
 
-            env->define(stmt->name->lexeme, val);
+            env->define(stmt->name, stmt->name->lexeme, val);
             return nullptr;
         };
+
         std::any visitWhile(While *stmt) override { return nullptr; };
 
         bool equals(std::any left, std::any right);

@@ -1,0 +1,10 @@
+
+
+var s = "some str";
+
+var s = "another";
+print s;
+
+
+
+print s;

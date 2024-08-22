@@ -19,12 +19,37 @@ class Environment
     */
 
     std::map<std::string, std::any> env_map = {};
+    Environment *outer;
 
 public:
-    Environment() {};
+    Environment()
+    {
+        outer = nullptr;
+    };
 
-    void define(const std::string &name, std::any value);
+    Environment(Environment *out)
+    {
+        this->outer = out;
+    }
+
+    void define(MPROCESS::IToken *except_token, const std::string &name, std::any value);
     std::any get(MPROCESS::IToken *ref);
+    void assign(MPROCESS::IToken *name, std::any value)
+    {
+        if (env_map.count(name->lexeme))
+        {
+            env_map[name->lexeme] = value;
+            return;
+        }
+
+        if (outer != nullptr)
+        {
+            outer->assign(name, value);
+            return;
+        }
+
+        throw new MontRunTimeError(name, "identifier '" + name->lexeme + "' is undefined");
+    };
 
     ~Environment();
 };

@@ -75,6 +75,20 @@ namespace MPROCESS
             parser_consume(TOKEN_TYPE::TOK_SEMI, "Expected ';' after expression");
             return new Expression(expr);
         };
+
+        std::vector<IBaseStmt *> block()
+        {
+            std::vector<IBaseStmt *> statements = {};
+            while (!check_type(TOKEN_TYPE::TOK_RCURLY) && !parser_is_at_end())
+            {
+
+                statements.push_back(decl());
+            }
+
+            parser_consume(TOKEN_TYPE::TOK_RCURLY, "Expected block closure statement '}' ");
+            return statements;
+        };
+
         IBaseStmt *statement()
         {
 
@@ -82,6 +96,11 @@ namespace MPROCESS
             {
                 return print_statement();
             };
+
+            if (match_token_to_current({TOKEN_TYPE::TOK_LCURLY}))
+            {
+                return new Block(block());
+            }
 
             return expression_statement();
         };

@@ -15,25 +15,28 @@ void MPROCESS::Parser::parser_synchronize()
 
     parser_advance();
 
-    if (parser_previous()->type == TOKEN_TYPE::TOK_SEMI)
+    while (!parser_is_at_end())
     {
-        return;
-    }
+        // parser ignores until the next statement is found, if and only if the previous statement throws an exception. Panic mode recovery allows for the parser to catch up to the next correct rule discarding all previous false rules.
+        if (parser_previous()->type == TOKEN_TYPE::TOK_SEMI)
+        {
+            return;
+        }
 
-    switch (parser_peek()->type)
-    {
-    case TOKEN_TYPE::TOK_CLASS:
-    case TOKEN_TYPE::TOK_IF:
-    case TOKEN_TYPE::TOK_FN:
-    case TOKEN_TYPE::TOK_PRINT:
-    case TOKEN_TYPE::TOK_WHILE:
-    case TOKEN_TYPE::TOK_RETURN:
-    case TOKEN_TYPE::TOK_FOR:
-    case TOKEN_TYPE::TOK_VAR:
-        return;
+        switch (parser_peek()->type)
+        {
+        case TOKEN_TYPE::TOK_CLASS:
+        case TOKEN_TYPE::TOK_IF:
+        case TOKEN_TYPE::TOK_FN:
+        case TOKEN_TYPE::TOK_PRINT:
+        case TOKEN_TYPE::TOK_WHILE:
+        case TOKEN_TYPE::TOK_RETURN:
+        case TOKEN_TYPE::TOK_FOR:
+        case TOKEN_TYPE::TOK_VAR:
+            return;
+        }
+        parser_advance();
     }
-
-    parser_advance();
 };
 
 MPROCESS::ParserError *MPROCESS::Parser::error(IToken *token, const std::string &message)
