@@ -1,10 +1,5 @@
 
 
-var s = "some str";
-
-var s = "another";
-print s;
-
-
-
-print s;
+var s;
+var a = 4 + 3;
+print a;

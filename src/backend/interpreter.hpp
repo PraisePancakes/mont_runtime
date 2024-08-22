@@ -26,7 +26,20 @@ namespace MPROCESS
         {
             std::any val = evaluate(a);
             env->assign(a->lvalue, val);
+
             return val;
+        };
+
+        std::any visitVar(Var *stmt) override
+        {
+            std::any val = nullptr;
+            if (stmt->initializer)
+            {
+                val = evaluate(stmt->initializer);
+            }
+
+            env->define(stmt->name, stmt->name->lexeme, val);
+            return nullptr;
         };
 
         void execute_block(std::vector<IBaseStmt *> stmts, Environment *e)
@@ -48,21 +61,13 @@ namespace MPROCESS
             return nullptr;
         };
 
-        std::any visitExpression(Expression *stmt) override { return nullptr; };
-
-        std::any visitIf(If *stmt) override { return nullptr; };
-
-        std::any visitVar(Var *stmt) override
+        std::any visitExpression(Expression *stmt) override
         {
-            std::any val = nullptr;
-            if (stmt->initializer)
-            {
-                val = evaluate(stmt->initializer);
-            }
-
-            env->define(stmt->name, stmt->name->lexeme, val);
+            evaluate(stmt->expr);
             return nullptr;
         };
+
+        std::any visitIf(If *stmt) override { return nullptr; };
 
         std::any visitWhile(While *stmt) override { return nullptr; };
 
@@ -95,6 +100,10 @@ namespace MPROCESS
         std::any visitUnary(Unary *expr) override;
         std::any visitVariable(Variable *expr) override
         {
+            if (env->get(expr->name).type() == typeid(nullptr))
+            {
+                throw MontRunTimeError(expr->name, "reference to uninitalized variable '" + expr->name->lexeme + "'");
+            }
             return env->get(expr->name);
         };
 

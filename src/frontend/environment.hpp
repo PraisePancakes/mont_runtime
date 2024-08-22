@@ -48,7 +48,7 @@ public:
             return;
         }
 
-        throw new MontRunTimeError(name, "identifier '" + name->lexeme + "' is undefined");
+        throw MontRunTimeError(name, "identifier '" + name->lexeme + "' is undefined");
     };
 
     ~Environment();
