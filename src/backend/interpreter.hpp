@@ -24,10 +24,10 @@ namespace MPROCESS
 
         std::any visitAssignment(Assignment *a) override
         {
-            std::any val = evaluate(a);
-            env->assign(a->lvalue, val);
+            std::any rval = evaluate(a);
+            env->assign(a->lvalue, rval);
 
-            return val;
+            return rval;
         };
 
         std::any visitVar(Var *stmt) override
@@ -88,7 +88,7 @@ namespace MPROCESS
     public:
         Interpreter()
         {
-            env = new Environment();
+            env = new Environment(); // top level env
         };
 
         void interpret(std::vector<MPROCESS::IBaseStmt *> statements);

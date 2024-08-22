@@ -1,0 +1,6 @@
+
+
+var s = 4;
+var s;
+
+print s;

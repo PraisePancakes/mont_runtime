@@ -19,8 +19,10 @@ std::string stringify(std::any value)
 
     if (value.type() == typeid(double))
     {
+
         if (std::trunc(std::any_cast<double>(value)) == std::any_cast<double>(value))
         {
+
             return std::to_string((int)std::any_cast<double>(value));
         }
         return std::to_string(std::any_cast<double>(value));
@@ -28,6 +30,7 @@ std::string stringify(std::any value)
 
     else if (value.type() == typeid(std::string))
     {
+
         return std::any_cast<std::string>(value);
     }
     else if (value.type() == typeid(char))
@@ -129,12 +132,12 @@ std::any MPROCESS::Interpreter::visitBinary(Binary *expr)
         }
         else if ((left.type() == typeid(std::string) && right.type() == typeid(double)))
         {
-            std::string right_string = std::to_string(std::any_cast<double>(right));
+            std::string right_string = stringify(std::any_cast<double>(right));
             return std::any_cast<std::string>(left) + right_string;
         }
         else if ((right.type() == typeid(std::string) && left.type() == typeid(double)))
         {
-            std::string left_string = std::to_string(std::any_cast<double>(left));
+            std::string left_string = stringify(std::any_cast<double>(left));
             return left_string + std::any_cast<std::string>(right);
         }
 
@@ -190,9 +193,7 @@ std::any MPROCESS::Interpreter::visitPrint(Print *stmt)
     std::any val = evaluate(stmt->expr);
     std::stringstream stream;
 
-    stream << stringify(val);
-
-    std::cout << stream.str();
+    std::cout << stream.str() << stringify(val);
 
     return nullptr;
 };

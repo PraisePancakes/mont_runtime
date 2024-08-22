@@ -1,5 +1,14 @@
 
 
-var s;
-var a = 4 + 3;
-print a;
+var s = 4;
+var a = 5;
+
+{
+    var d = 4.01;
+    var a = 6;
+    print "this is inner d : " + d + "\n";
+    print "this is inner a : " + a + "\n";
+    print "this is inner d + a : " + (d + a) + "\n";
+}
+print "this is outer a : " + a + "\n";
+print "this is outer s : " + s + "\n";

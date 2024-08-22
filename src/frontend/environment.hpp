@@ -44,6 +44,7 @@ public:
 
         if (outer != nullptr)
         {
+            std::cout << "here";
             outer->assign(name, value);
             return;
         }
