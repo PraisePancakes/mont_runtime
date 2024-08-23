@@ -38,13 +38,13 @@ public:
     {
         if (env_map.count(name->lexeme))
         {
-            env_map[name->lexeme] = value;
+            env_map.insert_or_assign(name->lexeme, value);
             return;
         }
 
         if (outer != nullptr)
         {
-            std::cout << "here";
+
             outer->assign(name, value);
             return;
         }
@@ -52,5 +52,7 @@ public:
         throw MontRunTimeError(name, "identifier '" + name->lexeme + "' is undefined");
     };
 
-    ~Environment();
+    ~Environment() {
+
+    };
 };

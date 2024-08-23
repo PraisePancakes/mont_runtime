@@ -24,7 +24,7 @@ namespace MPROCESS
 
         std::any visitAssignment(Assignment *a) override
         {
-            std::any rval = evaluate(a);
+            std::any rval = evaluate(a->expr);
             env->assign(a->lvalue, rval);
 
             return rval;
@@ -57,6 +57,7 @@ namespace MPROCESS
 
         std::any visitBlock(Block *stmt) override
         {
+
             execute_block(stmt->statements, new Environment(env));
             return nullptr;
         };

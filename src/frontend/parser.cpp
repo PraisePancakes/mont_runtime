@@ -148,7 +148,7 @@ MPROCESS::IBaseExpr *MPROCESS::Parser::assignment()
         MPROCESS::IToken *eq = parser_previous();
         MPROCESS::IBaseExpr *rvalue = assignment();
 
-        if (typeid(Variable *) == typeid(expr))
+        if (Variable *v = dynamic_cast<Variable *>(expr))
         {
             IToken *lvalue = ((Variable *)expr)->name;
             return new Assignment(lvalue, rvalue);

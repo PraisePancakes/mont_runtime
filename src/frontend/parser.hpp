@@ -71,6 +71,12 @@ namespace MPROCESS
         };
         IBaseStmt *expression_statement()
         {
+            /*
+                var x = 5;
+                x = 4;
+
+            */
+
             IBaseExpr *expr = expression();
             parser_consume(TOKEN_TYPE::TOK_SEMI, "Expected ';' after expression");
             return new Expression(expr);
@@ -109,6 +115,7 @@ namespace MPROCESS
         {
 
             // var x = 45;
+            // x = 4;
             IToken *id = parser_consume(TOKEN_TYPE::TOK_IDENTIFIER, "Expect variable name.");
 
             IBaseExpr *initializer = nullptr;

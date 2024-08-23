@@ -2,6 +2,8 @@
 
 void Environment::define(MPROCESS::IToken *except_token, const std::string &name, std::any value)
 {
+    std::cout << name << std::endl;
+
     if (!outer)
     {
         if (env_map[name].has_value())
@@ -27,5 +29,3 @@ std::any Environment::get(MPROCESS::IToken *ref_token)
 
     throw MontRunTimeError(ref_token, "Undefined variable '" + ref_token->lexeme + "'.");
 };
-
-Environment::~Environment() {};
