@@ -137,6 +137,19 @@ namespace MPROCESS
             return new If(condition, else_branch, then_branch);
         };
 
+        IBaseStmt *while_statement()
+        {
+            parser_consume(TOKEN_TYPE::TOK_LPAREN, "Expected '(' after while");
+            IBaseExpr *condition = expression();
+            parser_consume(TOKEN_TYPE::TOK_RPAREN, "Expected ')' after if condition");
+            IBaseStmt *body = statement();
+            return new While(condition, body);
+        };
+
+        IBaseStmt *for_statement() {
+
+        };
+
         IBaseStmt *statement()
         {
 
@@ -152,6 +165,16 @@ namespace MPROCESS
             if (match_token_to_current({TOKEN_TYPE::TOK_IF}))
             {
                 return if_statement();
+            }
+
+            if (match_token_to_current({TOKEN_TYPE::TOK_WHILE}))
+            {
+                return while_statement();
+            }
+
+            if (match_token_to_current({TOKEN_TYPE::TOK_FOR}))
+            {
+                return for_statement();
             }
 
             return expression_statement();

@@ -81,7 +81,15 @@ namespace MPROCESS
             return nullptr;
         };
 
-        std::any visitWhile(While *stmt) override { return nullptr; };
+        std::any visitWhile(While *stmt) override
+        {
+            while (is_truthy(evaluate(stmt->condition)))
+            {
+                execute(stmt->body);
+            }
+
+            return nullptr;
+        };
 
         bool equals(std::any left, std::any right);
 

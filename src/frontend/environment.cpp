@@ -15,12 +15,13 @@ void Environment::define(MPROCESS::IToken *except_token, const std::string &name
 std::any Environment::get(MPROCESS::IToken *ref_token)
 {
 
-    if (env_map[ref_token->lexeme].has_value())
+    auto it = env_map.find(ref_token->lexeme);
+    if (it != env_map.end())
     {
-        return env_map[ref_token->lexeme];
+        return it->second;
     }
 
-    if (outer != nullptr)
+    if (outer)
     {
         return outer->get(ref_token);
     }

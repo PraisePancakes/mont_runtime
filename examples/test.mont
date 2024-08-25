@@ -1,10 +1,7 @@
 //test anything in here
 
-var a = 3;
-var b = 2;
-
-if(a == 5 || b == 3) {
-  print "then";
-} else {
-  print "else";
+var i = 0;
+while(i < 5) {
+  print i;
+  i = i + 1;
 }

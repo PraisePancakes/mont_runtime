@@ -5,8 +5,9 @@ void Mont::run(const std::string &bytes)
 
     tokenizer = new MPROCESS::Tokenizer(bytes);
     parser = new MPROCESS::Parser(tokenizer->get_tokens());
-
-    std::vector<MPROCESS::IBaseStmt *> statements = parser->parse();
+    view_token_content();
+    std::vector<MPROCESS::IBaseStmt *>
+        statements = parser->parse();
 
     if (had_ct_error || had_rt_error)
     {

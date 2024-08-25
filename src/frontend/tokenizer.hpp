@@ -20,6 +20,8 @@ namespace MPROCESS
         {"&&", TOKEN_TYPE::TOK_AND},
         {"|", TOKEN_TYPE::TOK_BIT_OR},
         {"&", TOKEN_TYPE::TOK_REF},
+        {"while", TOKEN_TYPE::TOK_WHILE},
+        {"for", TOKEN_TYPE::TOK_FOR},
     };
 
     class Tokenizer
