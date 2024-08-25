@@ -68,7 +68,18 @@ namespace MPROCESS
             return nullptr;
         };
 
-        std::any visitIf(If *stmt) override { return nullptr; };
+        std::any visitIf(If *stmt) override
+        {
+            if (is_truthy(evaluate(stmt->condition)))
+            {
+                execute(stmt->then_branch);
+            }
+            else if (stmt->else_branch != nullptr)
+            {
+                execute(stmt->else_branch);
+            }
+            return nullptr;
+        };
 
         std::any visitWhile(While *stmt) override { return nullptr; };
 
@@ -108,6 +119,22 @@ namespace MPROCESS
             return env->get(expr->name);
         };
 
+        std::any visitLogical(Logical *expr) override
+        {
+            std::any left = evaluate(expr->left_op);
+
+            if (expr->op_tok->type == TOKEN_TYPE::TOK_OR)
+            {
+                if (is_truthy(left))
+                    return left;
+            }
+            else
+            {
+                if (!is_truthy(left))
+                    return left;
+            }
+            return evaluate(expr->right_op);
+        };
         ~Interpreter();
     };
 };

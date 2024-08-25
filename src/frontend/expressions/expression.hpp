@@ -7,6 +7,28 @@ namespace MPROCESS
 
     // expressions can be null
 
+    class Logical final : public IBaseExpr
+    {
+    public:
+        IBaseExpr *left_op;
+        IToken *op_tok;
+        IBaseExpr *right_op;
+
+        Logical(IBaseExpr *l,
+                IToken *o,
+                IBaseExpr *r)
+        {
+            this->left_op = l;
+            this->right_op = r;
+            this->op_tok = o;
+        };
+        std::any accept(IExprVisitor<std::any> *vis) override
+        {
+            return vis->visitLogical(this);
+        };
+        ~Logical() {};
+    };
+
     class Binary final : public IBaseExpr
     {
     public:

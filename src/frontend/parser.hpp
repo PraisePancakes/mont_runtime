@@ -24,6 +24,31 @@ namespace MPROCESS
         IBaseExpr *equality();
         IBaseExpr *term();
         IBaseExpr *factor();
+        IBaseExpr *or_expr()
+        {
+            IBaseExpr *expr = and_expr();
+            while (match_token_to_current({TOKEN_TYPE::TOK_OR}))
+            {
+                IToken *op = parser_previous();
+                IBaseExpr *right = and_expr();
+                expr = new Logical(expr, op, right);
+            }
+
+            return expr;
+        };
+        IBaseExpr *and_expr()
+        {
+            IBaseExpr *expr = equality();
+
+            while (match_token_to_current({TOKEN_TYPE::TOK_AND}))
+            {
+                IToken *op = parser_previous();
+                IBaseExpr *right = equality();
+                expr = new Logical(expr, op, right);
+            }
+
+            return expr;
+        };
 
         // traversal helpers
         IToken *parser_previous();
@@ -95,6 +120,23 @@ namespace MPROCESS
             return statements;
         };
 
+        IBaseStmt *if_statement()
+        {
+            parser_consume(TOKEN_TYPE::TOK_LPAREN, "Expected '(' after if");
+            IBaseExpr *condition = expression();
+            parser_consume(TOKEN_TYPE::TOK_RPAREN, "Expected ')' after if condition");
+            IBaseStmt *then_branch = statement();
+            IBaseStmt *else_branch = nullptr;
+
+            if (match_token_to_current({TOKEN_TYPE::TOK_ELSE}))
+            {
+
+                else_branch = statement();
+            }
+
+            return new If(condition, else_branch, then_branch);
+        };
+
         IBaseStmt *statement()
         {
 
@@ -106,6 +148,10 @@ namespace MPROCESS
             if (match_token_to_current({TOKEN_TYPE::TOK_LCURLY}))
             {
                 return new Block(block());
+            }
+            if (match_token_to_current({TOKEN_TYPE::TOK_IF}))
+            {
+                return if_statement();
             }
 
             return expression_statement();

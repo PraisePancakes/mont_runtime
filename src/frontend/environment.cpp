@@ -2,8 +2,6 @@
 
 void Environment::define(MPROCESS::IToken *except_token, const std::string &name, std::any value)
 {
-    std::cout << name << std::endl;
-
     if (!outer)
     {
         if (env_map[name].has_value())

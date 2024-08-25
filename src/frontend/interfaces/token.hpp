@@ -51,6 +51,8 @@ namespace MPROCESS
         TOK_VAR,
         TOK_WHILE,
         TOK_ENTRY,
+        TOK_REF,
+        TOK_BIT_OR,
         TOK_EOF,
 
     };

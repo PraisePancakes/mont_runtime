@@ -176,7 +176,12 @@ void MPROCESS::Tokenizer::scan_token()
     case '>':
         add_tok(match('=') ? TOKEN_TYPE::TOK_GREATER_EQUALS : TOKEN_TYPE::TOK_GREATER);
         break;
-
+    case '&':
+        add_tok(match('&') ? TOKEN_TYPE::TOK_AND : TOKEN_TYPE::TOK_REF);
+        break;
+    case '|':
+        add_tok(match('|') ? TOKEN_TYPE::TOK_OR : TOKEN_TYPE::TOK_BIT_OR);
+        break;
     case ' ':
     case '\r':
     case '\t':

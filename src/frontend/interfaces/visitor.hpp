@@ -16,6 +16,7 @@ namespace MPROCESS
     class Print;
     class Variable;
     class Assignment;
+    class Logical;
 
     template <typename T>
     class IExprVisitor
@@ -28,6 +29,7 @@ namespace MPROCESS
         virtual T visitGrouping(Grouping *g) = 0;
         virtual T visitVariable(Variable *v) = 0;
         virtual T visitAssignment(Assignment *a) = 0;
+        virtual T visitLogical(Logical *l) = 0;
         virtual ~IExprVisitor() = default;
     };
 

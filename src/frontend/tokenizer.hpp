@@ -9,12 +9,17 @@ namespace MPROCESS
 {
     static std::map<std::string, TOKEN_TYPE> kw_map{
         {"if", TOKEN_TYPE::TOK_IF},
+        {"else", TOKEN_TYPE::TOK_ELSE},
         {"fn", TOKEN_TYPE::TOK_FN},
         {"entry", TOKEN_TYPE::TOK_ENTRY},
         {"print", TOKEN_TYPE::TOK_PRINT},
         {"true", TOKEN_TYPE::TOK_TRUE},
         {"false", TOKEN_TYPE::TOK_FALSE},
         {"var", TOKEN_TYPE::TOK_VAR},
+        {"||", TOKEN_TYPE::TOK_OR},
+        {"&&", TOKEN_TYPE::TOK_AND},
+        {"|", TOKEN_TYPE::TOK_BIT_OR},
+        {"&", TOKEN_TYPE::TOK_REF},
     };
 
     class Tokenizer

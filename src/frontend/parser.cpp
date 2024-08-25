@@ -4,6 +4,7 @@
 
 MPROCESS::IToken *MPROCESS::Parser::parser_consume(TOKEN_TYPE type, std::string exception)
 {
+
     if (check_type(type))
         return parser_advance();
 
@@ -142,7 +143,7 @@ MPROCESS::IBaseExpr *MPROCESS::Parser::comparison()
 
 MPROCESS::IBaseExpr *MPROCESS::Parser::assignment()
 {
-    IBaseExpr *expr = equality();
+    IBaseExpr *expr = or_expr();
     if (match_token_to_current({TOKEN_TYPE::TOK_EQUALS}))
     {
         MPROCESS::IToken *eq = parser_previous();
@@ -154,7 +155,7 @@ MPROCESS::IBaseExpr *MPROCESS::Parser::assignment()
             return new Assignment(lvalue, rvalue);
         }
 
-        Mont::instance().error(*eq, "Invalid assignment expression");
+        Mont::instance().error(*eq, "Invalid assignment target");
     }
 
     return expr;
