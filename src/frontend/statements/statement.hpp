@@ -30,6 +30,18 @@ namespace MPROCESS
         ~Expression();
     };
 
+    class Break : public IBaseStmt
+    {
+    public:
+        Break() {};
+        std::any accept(IStmtVisitor<std::any> *vis) override
+        {
+            vis->visitBreak(this);
+            return nullptr;
+        };
+        ~Break() {};
+    };
+
     class Print : public IBaseStmt
     {
 
@@ -80,6 +92,5 @@ namespace MPROCESS
         std::any accept(IStmtVisitor<std::any> *vis) override;
         ~While();
     };
-
 
 };

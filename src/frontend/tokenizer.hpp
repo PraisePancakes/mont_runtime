@@ -23,6 +23,7 @@ namespace MPROCESS
         {"while", TOKEN_TYPE::TOK_WHILE},
         {"for", TOKEN_TYPE::TOK_FOR},
         {"enum", TOKEN_TYPE::TOK_ENUM},
+        {"break", TOKEN_TYPE::TOK_BREAK},
     };
 
     class Tokenizer

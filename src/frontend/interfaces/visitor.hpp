@@ -17,6 +17,7 @@ namespace MPROCESS
     class Variable;
     class Assignment;
     class Logical;
+    class Break;
 
     template <typename T>
     class IExprVisitor
@@ -43,7 +44,7 @@ namespace MPROCESS
         virtual T visitVar(Var *stmt) = 0;
         virtual T visitIf(If *stmt) = 0;
         virtual T visitWhile(While *stmt) = 0;
-
+        virtual void visitBreak(Break *stmt) = 0;
         virtual ~IStmtVisitor() = default;
     };
 

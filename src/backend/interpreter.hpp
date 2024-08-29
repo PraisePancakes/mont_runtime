@@ -7,6 +7,7 @@
 #include "../frontend/interfaces/statement_base.hpp"
 #include "../frontend/runtime_error.hpp"
 #include "../frontend/environment.hpp"
+#include "../frontend/parser_break_exception.hpp"
 
 #include <vector>
 
@@ -68,6 +69,11 @@ namespace MPROCESS
             return nullptr;
         };
 
+        void visitBreak(Break *stmt) override
+        {
+            throw BreakException();
+        };
+
         std::any visitIf(If *stmt) override
         {
             if (is_truthy(evaluate(stmt->condition)))
@@ -83,10 +89,16 @@ namespace MPROCESS
 
         std::any visitWhile(While *stmt) override
         {
-            while (is_truthy(evaluate(stmt->condition)))
+            try
             {
-                execute(stmt->body);
+                while (is_truthy(evaluate(stmt->condition)))
+                {
+                    execute(stmt->body);
+                }
             }
+            catch (BreakException e)
+            {
+            };
 
             return nullptr;
         };

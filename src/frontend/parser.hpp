@@ -11,8 +11,11 @@
 namespace MPROCESS
 {
 
+    static int loop_depth = 0;
+
     class Parser
     {
+
         size_t current_token_index = 0;
 
         // grammar rules
@@ -117,6 +120,7 @@ namespace MPROCESS
             }
 
             parser_consume(TOKEN_TYPE::TOK_RCURLY, "Expected block closure statement '}' ");
+            loop_depth--;
             return statements;
         };
 
@@ -139,15 +143,18 @@ namespace MPROCESS
 
         IBaseStmt *while_statement()
         {
+
             parser_consume(TOKEN_TYPE::TOK_LPAREN, "Expected '(' after while");
             IBaseExpr *condition = expression();
             parser_consume(TOKEN_TYPE::TOK_RPAREN, "Expected ')' after if condition");
             IBaseStmt *body = statement();
+
             return new While(condition, body);
         };
 
         IBaseStmt *for_statement()
         {
+
             parser_consume(TOKEN_TYPE::TOK_LPAREN, "Expected '(' after for");
             IBaseStmt *initializer;
             if (match_token_to_current({TOKEN_TYPE::TOK_SEMI}))
@@ -199,6 +206,18 @@ namespace MPROCESS
             return body;
         };
 
+        IBaseStmt *break_statement()
+        {
+            std::cout << "ld : " << loop_depth;
+            if (loop_depth == 0)
+            {
+                error(parser_previous(), "Must be inside a loop to use 'break'.");
+            };
+
+            parser_consume(TOKEN_TYPE::TOK_SEMI, "Expected ';' after break");
+            return new Break();
+        };
+
         IBaseStmt *statement()
         {
 
@@ -209,6 +228,7 @@ namespace MPROCESS
 
             if (match_token_to_current({TOKEN_TYPE::TOK_LCURLY}))
             {
+                loop_depth++;
                 return new Block(block());
             }
             if (match_token_to_current({TOKEN_TYPE::TOK_IF}))
@@ -224,6 +244,11 @@ namespace MPROCESS
             if (match_token_to_current({TOKEN_TYPE::TOK_FOR}))
             {
                 return for_statement();
+            }
+
+            if (match_token_to_current({TOKEN_TYPE::TOK_BREAK}))
+            {
+                return break_statement();
             }
 
             return expression_statement();

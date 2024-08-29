@@ -215,4 +215,6 @@ std::any MPROCESS::Interpreter::visitUnary(Unary *expr)
     return nullptr;
 };
 
-MPROCESS::Interpreter::~Interpreter() {};
+MPROCESS::Interpreter::~Interpreter() {
+
+};

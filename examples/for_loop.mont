@@ -1,10 +1,14 @@
 
+//first 21 elements of the fib sequence
 
 var a = 0;
 var temp;
 
 for (var b = 1; a < 10000; b = temp + b) {
-  print a + "\n";
+  print "\n" + a + "\n";
   temp = a;
   a = b;
+  break;
 }
+
+print "done";

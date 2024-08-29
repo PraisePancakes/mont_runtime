@@ -18,15 +18,15 @@ if(b == 5) {
 
 
 var a = 3;
-var b = 2;
+var z = 2;
 
-if(a == 5 || b == 3) {
+if(a == 5 || z == 3) {
   print "OR then";
 } else {
   print "OR else";
 }
 
-if(a == 3 && b == 2) {
+if(a == 3 && z == 2) {
   print "AND then";
 } else {
   print "AND else";

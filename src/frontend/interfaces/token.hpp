@@ -54,6 +54,7 @@ namespace MPROCESS
         TOK_REF,
         TOK_BIT_OR,
         TOK_ENUM,
+        TOK_BREAK,
         TOK_EOF,
 
     };
