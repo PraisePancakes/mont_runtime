@@ -26,9 +26,6 @@ namespace MPROCESS
     public:
         IBaseExpr *expr;
         Expression(IBaseExpr *expr);
-
-        IBaseExpr *get_expression() const;
-
         std::any accept(IStmtVisitor<std::any> *vis) override;
         ~Expression();
     };
@@ -83,5 +80,6 @@ namespace MPROCESS
         std::any accept(IStmtVisitor<std::any> *vis) override;
         ~While();
     };
+
 
 };

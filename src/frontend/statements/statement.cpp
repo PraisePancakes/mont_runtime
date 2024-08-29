@@ -26,10 +26,6 @@ MPROCESS::Expression::Expression(IBaseExpr *expr)
     this->expr = expr;
 };
 
-MPROCESS::IBaseExpr *MPROCESS::Expression::get_expression() const
-{
-    return expr;
-}
 
 std::any MPROCESS::Expression::accept(IStmtVisitor<std::any> *vis)
 {

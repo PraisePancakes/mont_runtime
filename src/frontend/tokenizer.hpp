@@ -22,6 +22,7 @@ namespace MPROCESS
         {"&", TOKEN_TYPE::TOK_REF},
         {"while", TOKEN_TYPE::TOK_WHILE},
         {"for", TOKEN_TYPE::TOK_FOR},
+        {"enum", TOKEN_TYPE::TOK_ENUM},
     };
 
     class Tokenizer

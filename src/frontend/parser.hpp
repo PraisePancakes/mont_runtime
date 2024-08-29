@@ -146,8 +146,57 @@ namespace MPROCESS
             return new While(condition, body);
         };
 
-        IBaseStmt *for_statement() {
+        IBaseStmt *for_statement()
+        {
+            parser_consume(TOKEN_TYPE::TOK_LPAREN, "Expected '(' after for");
+            IBaseStmt *initializer;
+            if (match_token_to_current({TOKEN_TYPE::TOK_SEMI}))
+            {
+                initializer = nullptr;
+            }
+            else if (match_token_to_current({TOKEN_TYPE::TOK_VAR}))
+            {
+                initializer = var_decl();
+            }
+            else
+            {
+                initializer = expression_statement();
+            }
 
+            IBaseExpr *cond = nullptr;
+            if (!check_type(TOKEN_TYPE::TOK_SEMI))
+            {
+                cond = expression();
+            }
+
+            parser_consume(TOKEN_TYPE::TOK_SEMI, "Expected ';' after loop condition");
+
+            IBaseExpr *inc = nullptr;
+            if (!check_type(TOKEN_TYPE::TOK_RPAREN))
+            {
+                inc = expression();
+            }
+
+            parser_consume(TOKEN_TYPE::TOK_RPAREN, "Expected ')' after for clauses");
+
+            IBaseStmt *body = statement();
+
+            if (inc != nullptr)
+            {
+                body = new Block({body, new Expression(inc)});
+            }
+
+            if (cond == nullptr)
+                cond = new Literal(true);
+
+            body = new While(cond, body);
+
+            if (initializer != nullptr)
+            {
+                body = new Block({initializer, body});
+            }
+
+            return body;
         };
 
         IBaseStmt *statement()
