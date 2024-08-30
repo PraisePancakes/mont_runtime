@@ -33,6 +33,7 @@ public:
     }
 
     void define(MPROCESS::IToken *except_token, const std::string &name, std::any value);
+    void define(const std::string &name, std::any v);
     std::any get(MPROCESS::IToken *ref);
     void assign(MPROCESS::IToken *name, std::any value)
     {

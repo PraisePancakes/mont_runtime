@@ -2,8 +2,35 @@
 #include "../mont.hpp"
 #include <sstream>
 #include <cmath>
+#include "../frontend/mont_callable.hpp"
 
-std::string stringify(std::any value)
+#include "../frontend/mont_callable.hpp"
+
+static Environment *global = new Environment();
+
+MPROCESS::Interpreter::Interpreter()
+{
+    env = global;
+};
+void MPROCESS::Interpreter::execute_block(std::vector<IBaseStmt *> stmts, Environment *e)
+{
+
+    Environment *prev_env = this->env;
+    this->env = e;
+    for (auto &s : stmts)
+    {
+        execute(s);
+    }
+
+    this->env = prev_env;
+};
+
+Environment *MPROCESS::Interpreter::get_global_env() const
+{
+    return global;
+}
+
+std::string MPROCESS::Interpreter::stringify(std::any value)
 {
 
     if (!value.has_value())
@@ -39,6 +66,32 @@ std::string stringify(std::any value)
     }
 
     return "";
+};
+
+std::any MPROCESS::Interpreter::visitVariable(Variable *expr)
+{
+    if (env->get(expr->name).type() == typeid(nullptr))
+    {
+        throw MontRunTimeError(expr->name, "reference to uninitalized variable '" + expr->name->lexeme + "'");
+    }
+    return env->get(expr->name);
+};
+
+std::any MPROCESS::Interpreter::visitLogical(Logical *expr)
+{
+    std::any left = evaluate(expr->left_op);
+
+    if (expr->op_tok->type == TOKEN_TYPE::TOK_OR)
+    {
+        if (is_truthy(left))
+            return left;
+    }
+    else
+    {
+        if (!is_truthy(left))
+            return left;
+    }
+    return evaluate(expr->right_op);
 };
 
 std::any MPROCESS::Interpreter::evaluate(IBaseExpr *expr)
@@ -104,6 +157,111 @@ void MPROCESS::Interpreter::check_unary_operand(MPROCESS::IToken *op, std::any o
     {
         throw new MontRunTimeError(op, "Unary operand must be of integral type");
     };
+};
+
+std::any MPROCESS::Interpreter::visitAssignment(Assignment *a)
+{
+    std::any rval = evaluate(a->expr);
+    env->assign(a->lvalue, rval);
+
+    return rval;
+};
+
+std::any MPROCESS::Interpreter::visitVar(Var *stmt)
+{
+    std::any val = nullptr;
+    if (stmt->initializer)
+    {
+        val = evaluate(stmt->initializer);
+    }
+
+    env->define(stmt->name, stmt->name->lexeme, val);
+    return nullptr;
+};
+
+std::any MPROCESS::Interpreter::visitBlock(Block *stmt)
+{
+
+    execute_block(stmt->statements, new Environment(env));
+    return nullptr;
+};
+
+std::any MPROCESS::Interpreter::visitExpression(Expression *stmt)
+{
+    evaluate(stmt->expr);
+    return nullptr;
+};
+
+void MPROCESS::Interpreter::visitBreak(Break *stmt)
+{
+    throw BreakException();
+};
+
+std::any MPROCESS::Interpreter::visitIf(If *stmt)
+{
+    if (is_truthy(evaluate(stmt->condition)))
+    {
+        execute(stmt->then_branch);
+    }
+    else if (stmt->else_branch != nullptr)
+    {
+        execute(stmt->else_branch);
+    }
+    return nullptr;
+};
+
+std::any MPROCESS::Interpreter::clock(Interpreter &, const std::vector<std::any> &)
+{
+    std::time_t t = std::time(nullptr);
+    return static_cast<double>(t);
+}
+
+std::any MPROCESS::Interpreter::visitFunction(Function *f)
+{
+    env->define(f->name->lexeme, MontCallable(f));
+    return {};
+};
+
+std::any MPROCESS::Interpreter::visitWhile(While *stmt)
+{
+    try
+    {
+        while (is_truthy(evaluate(stmt->condition)))
+        {
+            execute(stmt->body);
+        }
+    }
+    catch (BreakException e)
+    {
+    };
+
+    return nullptr;
+};
+
+std::any MPROCESS::Interpreter::visitCall(Call *call_expr)
+{
+    std::any callee = evaluate(call_expr->callee);
+    std::vector<std::any> args_list;
+
+    for (auto &arg : call_expr->args)
+    {
+        args_list.push_back(arg);
+    }
+
+    if (callee.type() != typeid(MontCallable))
+    {
+        throw MontRunTimeError(call_expr->paren, "Can only call to function and classes");
+    };
+
+    MontCallable *func = std::any_cast<MontCallable *>(callee);
+
+    if (args_list.size() != func->arity)
+    {
+        const std::string err = "Expected " + std::to_string(func->arity) + " arguments but got " + std::to_string(args_list.size()) + ".";
+        throw MontRunTimeError(call_expr->paren, err);
+    };
+
+    return func->call(this, args_list);
 };
 
 void MPROCESS::Interpreter::check_binary_operands(MPROCESS::IToken *op, std::any left, std::any right)

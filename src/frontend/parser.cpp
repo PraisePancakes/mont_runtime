@@ -84,6 +84,46 @@ MPROCESS::IBaseExpr *MPROCESS::Parser::primary()
     throw error(parser_peek(), "Expected an expression");
 };
 
+MPROCESS::IBaseExpr *MPROCESS::Parser::finish_call(MPROCESS::IBaseExpr *callee)
+{
+    std::vector<MPROCESS::IBaseExpr *> args;
+
+    if (!check_type(MPROCESS::TOKEN_TYPE::TOK_RPAREN))
+    {
+        do
+        {
+            if (args.size() > 255)
+            {
+                error(parser_peek(), "No more than 255 arguments are allowed to a function callee.");
+            }
+            args.push_back(expression());
+        } while (match_token_to_current({TOKEN_TYPE::TOK_COMMA}));
+    }
+
+    IToken *paren = parser_consume(TOKEN_TYPE::TOK_RPAREN, "Expected ')' after function args.");
+
+    return new Call(callee, paren, args);
+};
+
+MPROCESS::IBaseExpr *MPROCESS::Parser::call()
+{
+    MPROCESS::IBaseExpr *expr = primary();
+
+    while (true)
+    {
+        if (match_token_to_current({TOKEN_TYPE::TOK_LPAREN}))
+        {
+            expr = finish_call(expr);
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    return expr;
+};
+
 MPROCESS::IBaseExpr *MPROCESS::Parser::unary()
 {
 
@@ -94,7 +134,7 @@ MPROCESS::IBaseExpr *MPROCESS::Parser::unary()
         return new Unary(op, right);
     }
 
-    return primary();
+    return call();
 };
 
 MPROCESS::IBaseExpr *MPROCESS::Parser::factor()

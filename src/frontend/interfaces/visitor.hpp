@@ -18,6 +18,8 @@ namespace MPROCESS
     class Assignment;
     class Logical;
     class Break;
+    class Call;
+    class Function;
 
     template <typename T>
     class IExprVisitor
@@ -31,6 +33,7 @@ namespace MPROCESS
         virtual T visitVariable(Variable *v) = 0;
         virtual T visitAssignment(Assignment *a) = 0;
         virtual T visitLogical(Logical *l) = 0;
+        virtual T visitCall(Call *c) = 0;
         virtual ~IExprVisitor() = default;
     };
 
@@ -46,6 +49,7 @@ namespace MPROCESS
         virtual T visitWhile(While *stmt) = 0;
         virtual void visitBreak(Break *stmt) = 0;
         virtual ~IStmtVisitor() = default;
+        virtual T visitFunction(Function *f) = 0;
     };
 
 }

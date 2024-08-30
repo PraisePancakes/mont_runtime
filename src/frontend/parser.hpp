@@ -17,7 +17,7 @@ namespace MPROCESS
     {
 
         size_t current_token_index = 0;
-
+        IBaseExpr *finish_call(IBaseExpr *callee);
         // grammar rules
         IBaseExpr *comparison();
         IBaseExpr *assignment();
@@ -27,6 +27,7 @@ namespace MPROCESS
         IBaseExpr *equality();
         IBaseExpr *term();
         IBaseExpr *factor();
+        IBaseExpr *call();
         IBaseExpr *or_expr()
         {
             IBaseExpr *expr = and_expr();

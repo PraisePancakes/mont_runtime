@@ -54,6 +54,23 @@ namespace MPROCESS
         ~Print();
     };
 
+    class Function : public IBaseStmt
+    {
+
+    public:
+        IToken *name;
+        std::vector<IToken *> params;
+        std::vector<IBaseStmt *> body;
+
+        Function(IToken *n, std::vector<IToken *> p, std::vector<IBaseStmt *> b) : name(n), params(p), body(b) {};
+        std::any accept(IStmtVisitor<std::any> *vis) override
+        {
+            return vis->visitFunction(this);
+        };
+
+        ~Function() {};
+    };
+
     class Var : public IBaseStmt
     {
 
@@ -92,5 +109,4 @@ namespace MPROCESS
         std::any accept(IStmtVisitor<std::any> *vis) override;
         ~While();
     };
-
 };

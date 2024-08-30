@@ -2,6 +2,8 @@
 #include "../interfaces/token.hpp"
 #include "../interfaces/visitor.hpp"
 #include "../interfaces/expression_base.hpp"
+#include <vector>
+
 namespace MPROCESS
 {
 
@@ -46,6 +48,21 @@ namespace MPROCESS
         };
 
         ~Binary();
+    };
+
+    class Call : public IBaseExpr
+    {
+
+    public:
+        IBaseExpr *callee;
+        IToken *paren;
+        std::vector<IBaseExpr *> args;
+        Call(IBaseExpr *c, IToken *p, std::vector<IBaseExpr *> a) : callee(c), paren(p), args(a) {};
+        std::any accept(IExprVisitor<std::any> *vis) override
+        {
+            return vis->visitCall(this);
+        };
+        ~Call() {};
     };
 
     class Unary final : public IBaseExpr

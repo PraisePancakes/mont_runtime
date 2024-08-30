@@ -12,6 +12,18 @@ void Environment::define(MPROCESS::IToken *except_token, const std::string &name
     env_map[name] = value;
 };
 
+void Environment::define(const std::string &name, std::any value)
+{
+    if (!outer)
+    {
+        if (env_map[name].has_value())
+        {
+            throw MontRunTimeError(nullptr, "redefinition of '" + name + "', lvalues of the same name must be seperated by unique environments");
+        }
+    }
+    env_map[name] = value;
+};
+
 std::any Environment::get(MPROCESS::IToken *ref_token)
 {
 
